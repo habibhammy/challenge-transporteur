@@ -100,7 +100,7 @@ public class GJobData {
 	@Override
 	public String toString() {
 		return "GJobData [dueDate=" + dueDate + ", holdingCost=" + holdingCost
-				+ ", size=" + size + "]";
+				+ ", size=" + size + "]"+"\n";
 	}
 
 	public static GJobData generateRandom(Random rand) {

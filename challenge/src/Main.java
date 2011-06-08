@@ -30,30 +30,18 @@ import gsolver.GSolver;
  */
 public class Main {
 	
-	public static void main(String args[]) {		
-		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance007a.txt") ;
+	public static void main(String args[]) {
+		
+		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance007.txt") ;
 		System.out.println("PROBLEM="+pb.toString()+"\n") ;
 
 		GSupplyLinkSolution sol2 = new GSupplyLinkSolution(pb, "data/instance007a-sol02.txt") ;
-		sol2.evaluate() ;
+		sol2.evaluate();
 		System.out.println (sol2.toString()+"\n") ;
 
 		// New solver
 		GSolver solv = new GSolver(pb) ;
 		
-		solv.start() ;
-
-//		// Generation of instances
-//		int n = 50 ;
-//		for (int i=4;i<20;i++ ) {
-//			GSupplyLinkProblem pb = GSupplyLinkProblem.generateRandom(n) ;
-//			//System.out.println ("slpb="+pb.toString()) ;
-//			char c = (char) ('a'+i) ;
-//			String name = "data/instance0"+n+c+".txt" ;
-//			System.out.println("name="+name) ;
-//			pb.save(name) ;
-//		}
-		
+		solv.start() ;		
 	}
-
 }
