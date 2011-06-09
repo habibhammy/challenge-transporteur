@@ -18,8 +18,10 @@
  */
 
 import gproblem.GSupplyLinkProblem;
+import gsolution.GJobVariable;
 import gsolution.GSupplyLinkSolution;
 import gsolver.GSolver;
+import gsolver.MySolver;
 
 /**
  * 
@@ -40,8 +42,10 @@ public class Main {
 		System.out.println (sol2.toString()+"\n") ;
 
 		// New solver
-		GSolver solv = new GSolver(pb) ;
+		/*GSolver solv = new GSolver(pb, sol2) ;
+		solv.start() ;	*/
 		
-		solv.start() ;		
+		MySolver solv = new MySolver(pb);
+		solv.start();
 	}
 }
