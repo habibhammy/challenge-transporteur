@@ -45,6 +45,8 @@ public class MainTest {
 		
 
 		MySolverTest solv = new MySolverTest(pb);
+		//Temps pour un fichier taille 50
+		//solv.setSolvingTime(10000);
 		solv.start();
 
 	}

@@ -10,17 +10,14 @@ Solution trouvé : Creation d'une liste de voisin, si tous les voisins sont evalu
 
 Resultat , l'algo trouve la solution optimale en moin de 100 iteration ! ( le plus souvent ... )
 
-Fonction ajouté : le nombre de batch est "trouvé" par l'application
-
-NEW RESULTAT apres correction d'une coquille :D
-
+Fonction ajouté : le nombre de batch est "trouvé" par l'application <- fonctionne pas pour les nb de produits
 
 Resultat sur les fichier (EN 5Sec !!!!) :
-Fichier		resultatDmonAlgo		resultat donné par le prof
+Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 005			215						215
 007a		2581					2581
 007			245						245
-020a		340-350-380				200
+020a		260-270-300				200 
 050a		790						250    
 100a		303 380					49 392  
 200a		988 895					323 955
@@ -29,6 +26,10 @@ normalement l'algo doit tourne
 - 10 secondes pour les petites instances (50 jobs)
 - 30 secondes pour les moyennes instances (100 jobs)
 - 1 minutes pour les grandes instances (200 jobs)
+
+
+à faire (prioritaire ): Crée une meilleure solution initiale , pour l'instant c'est une solution aleatoire valide, 
+c'est inutilisable pour les fichier > 20
 
 à faire : essayer de faire evoluer la durée tabou 
 
