@@ -3,4 +3,8 @@ Fonctionnement de mon programme :
 Creé aleatoirement une solution valide, cherche tous les voisins de cette solution , les évalues.
 Si un voisins est meilleurs, on le selectionne et on cherche ces voisins ...
 
-Liste tabou de base implémenté, probleme rencontrer : lorsque tous les voisins sont tabou , les solutions n'evolue plus ...
+Liste tabou de base implémenté, probleme rencontrer : il n'est pas rare que tous les "voisins" 
+sont des solution qui on une capacité trop grande...
+
+En cours:
+autorisé l'algo à passer par ces solutions.

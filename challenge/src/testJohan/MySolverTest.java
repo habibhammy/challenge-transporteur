@@ -52,8 +52,9 @@ introduits.
 	public GSupplyLinkSolution init(){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 
-		int nbrbatch = (int) (rand.nextDouble()*problem.getN())+1 ;
-		sol.setNbrBatch(3);
+		//int nbrbatch = (int) (rand.nextDouble()*problem.getN())+1 ;
+		int nbrbatch=3;
+		sol.setNbrBatch(nbrbatch);
 		for (int i=0;i<problem.getN();++i) {
 			//	int batch = 1;
 			int batch = (int) (rand.nextDouble()*nbrbatch)+1 ;
@@ -84,29 +85,27 @@ introduits.
 			sol = init();
 		}while(sol.evaluate() <0);
 		
-		duréeTaboue=15;
+		duréeTaboue=5;
 		boolean estDejaTaboue=false;
+		int nbMvt=1;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution
-			creerListeCandidats(sol);
+			log.println("nb mvt"+nbMvt);
+			creerListeCandidats(sol,nbMvt);
 			//MAJ liste tabou
 			
-
-			//MeilleurVoisins parmit les candidats
-			/*if(sol.getEvaluation()== meilleurCandidats.getEvaluation()){
-				log.println("OPTIMUM LOCAL");
-			}*/
 			
-			//if (sol.toString().compareTo(meilleurCandidats.toString()) != 0){
-				
-			//}
+			// Si la meilleur solution trouvé dans les voisins est TABOU , on augmente le nombre de mouvement
 			for(int i =0;i <listeTabou.size();++i){
 				if(listeTabou.get(i).getSol().toString().compareTo(meilleurCandidats.toString()) == 0){
 					estDejaTaboue=true;
+					//nbMvt=3;
 				}
-			}	
+			}
+			//on ajoute dans la liste que les mvt qui n'y sont pas deja
 			if(!estDejaTaboue){
 				listeTabou.add(new Tabou(meilleurCandidats,duréeTaboue));
+				nbMvt=1;
 			}
 			estDejaTaboue=false;
 			sol=meilleurCandidats.clone();
@@ -127,10 +126,10 @@ introduits.
 			}
 			iteration ++  ;
 			// Reduction de la durée tabou des mvt tabou de 1
-			log.println("\n LISTE TABOU :");
+		//	log.println("\n LISTE TABOU :");
 			for(int i =0;i <listeTabou.size();++i){
 				
-				log.println(listeTabou.get(i).getSol().toString());
+				//log.println(listeTabou.get(i).getSol().toString());
 				if(listeTabou.get(i).reductionDuréeTabou()){
 					listeTabou.remove(i);
 				}
@@ -144,7 +143,7 @@ introduits.
 	 * Creation de la liste des voisins de sol
 	 * @param sol
 	 */
-	public void creerListeCandidats(GSupplyLinkSolution sol){
+	public void creerListeCandidats(GSupplyLinkSolution sol,int nbMvtAutorisé){
 		double meilleurVal=2000000000;
 		double eval=0;
 		boolean tabou=false;
@@ -152,17 +151,39 @@ introduits.
 		//Initialisation de temp au valeur de sol
 		GSupplyLinkSolution temp=sol.clone();
 		GSupplyLinkSolution best=sol.clone();
+		//nb d'evaluation a -1
+		int compte=0;
 		//Creation de la liste
 	//	System.out.println(sol.toString());
 		// Boucle de génération  et test des voisins
+		//log.println(sol.toString());
 		for (int i=0;i<problem.getN();i++) {
-			for (int j=1;j<problem.getN();++j){
-				temp.getProcessingSchedule()[i].setBatchIndice( (sol.getProcessingSchedule()[i].getBatchIndice()+j)%(problem.getN()) ) ;
+			for (int j=1;j<sol.getNbrBatch();++j){
+				temp.getProcessingSchedule()[i].setBatchIndice( ((sol.getProcessingSchedule()[i].getBatchIndice()+j)%(sol.getNbrBatch()))) ;
 				if(temp.getProcessingSchedule()[i].getBatchIndice()==0){
-					temp.getProcessingSchedule()[i].setBatchIndice(problem.getN());
+					temp.getProcessingSchedule()[i].setBatchIndice(sol.getNbrBatch());
 				}
+				if(nbMvtAutorisé > 1){
+					for(int k=1;k<nbMvtAutorisé;k++){
+						//Si plusieur mvt sont autorisé , on choisi un batch aleatoirement et on l'incremente
+						int batch = (int) (rand.nextDouble()*sol.getNbrBatch()+1);
+
+						temp.getProcessingSchedule()[batch].setBatchIndice( (sol.getProcessingSchedule()[batch].getBatchIndice()+j)%(sol.getNbrBatch()) ) ;	
+						if(temp.getProcessingSchedule()[batch].getBatchIndice()==0){
+							temp.getProcessingSchedule()[batch].setBatchIndice(sol.getNbrBatch());
+						}
+					}
+					//log.println("NEW MVT AUTO");
+					//temp.evaluate();
+					//log.println(temp.toString());
+				}
+				//log.println(temp.toString());
 				eval=temp.evaluate();
-				log.println(""+eval);
+				
+					//log.println(temp.toString());
+				if(eval== -1){
+					compte++;
+				}
 				if(eval != -1 && eval <= meilleurVal){
 					//test si la valeur est tabou
 					for(int k=0;k<listeTabou.size();k++){
@@ -178,10 +199,12 @@ introduits.
 				}
 				temp=sol.clone();
 			}
+			
 		}
 		//log.println("\n\n\nMeilleur voisin:"+best.toString());
 		//fin creation liste
 		//Evaluation du meilleur voisins de cette liste
+		log.println("COmpte"+compte);
 		this.meilleurCandidats=best;
 	}
 
