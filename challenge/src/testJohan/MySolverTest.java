@@ -132,20 +132,20 @@ introduits.
 					test.add(nombreJob);
 					for (int j = nombreJob-1; j >= 0; --j) {
 						//if(tempo[j]!= null ){
-							if( sommeVolume + problem.getJobData()[j].getSize()==problem.getTransporter(0).getCapacity() ){
-								test.add(j);
-								System.out.println("MATCH");
-								while(!test.isEmpty()){
-									
-									indice[test.get(test.size()-1)]=nbrbatch;
-									tempo[test.get(test.size()-1)]=null;
-									System.out.println("tempo["+test.get(test.size()-1)+"]=null");
-									sommeVolume=0;
-									matchFinded=true;
-									test.remove(test.size()-1);
-								}
-								nbrbatch++;
+						if( sommeVolume + problem.getJobData()[j].getSize()==problem.getTransporter(0).getCapacity() ){
+							test.add(j);
+							System.out.println("MATCH");
+							while(!test.isEmpty()){
+
+								indice[test.get(test.size()-1)]=nbrbatch;
+								tempo[test.get(test.size()-1)]=null;
+								System.out.println("tempo["+test.get(test.size()-1)+"]=null");
+								sommeVolume=0;
+								matchFinded=true;
+								test.remove(test.size()-1);
 							}
+							nbrbatch++;
+						}
 					}
 					nombreJob--;
 
@@ -172,10 +172,118 @@ introduits.
 			sol.getProcessingSchedule()[i].setBatchIndice(indice[i]);
 			//System.out.println("indice :"+indice[i]+"\n");
 		}
-		
+
 		sol.evaluate();
 		log.println(sol.toString());
 		return sol;
+	}
+	public GSupplyLinkSolution initMinimizeBatch(){
+		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem);
+		boolean fin=false;
+		double sommeVolume=0;
+		int nbrbatch = -1;
+		boolean added=false;
+		double indice[]=new double[problem.getN()];
+		double finaltab[]=new double[problem.getN()];
+		for(int i=0;i<problem.getN();++i){
+			indice[i]=problem.getJobData()[i].getSize();
+
+		}
+		int nbBatchAjouté=0;
+		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
+		while(!fin){
+			int index=indexMinimumSize(indice);
+			if(index != -1){
+				//log.println("Index minimum"+index);
+				//log.println("Volume mini:"+problem.getJobData()[index].getSize());
+				sommeVolume+=problem.getJobData()[index].getSize();
+				if(sommeVolume > problem.getTransporter(0).getCapacity()){
+					//log.println("ICI");
+					sommeVolume-=problem.getJobData()[index].getSize();
+					added=true;
+				}else{
+					//log.println("Somme : "+sommeVolume);
+					indiceBatch.add(index);
+					//log.println("indicebach.add "+index);
+					indice[index]=-1;
+				}
+				
+				
+				if(sommeVolume < problem.getTransporter(0).getCapacity()){
+					for(int i=0;i<indice.length;i++){
+					//	log.println("Somme : "+sommeVolume);
+						if(indice[i]!=-1){
+							if( sommeVolume + problem.getJobData()[i].getSize()==problem.getTransporter(0).getCapacity() ){
+								//log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
+								//log.println("indicebach.add "+i);
+								indiceBatch.add(i);
+								added=true;
+								break;
+							}
+						}
+					}
+				}else{
+				//	log.println("autre cas");
+					//indiceBatch.remove(indiceBatch.size()-1);
+					added=true;
+				}
+			}else{
+				added=true;
+			}
+
+			if(added){
+				//log.println("AJOUT");
+				while(!indiceBatch.isEmpty()){
+				//	log.println("AJOUT "+indiceBatch.get(indiceBatch.size()-1));
+					finaltab[indiceBatch.get(indiceBatch.size()-1)]=nbrbatch;
+					sommeVolume=0;
+					indice[indiceBatch.get(indiceBatch.size()-1)]=-1;
+					indiceBatch.remove(indiceBatch.size()-1);
+					nbBatchAjouté++;
+				}
+				for (int i = 0; i < problem.getN(); i++) {
+					//log.println("fintab["+i+"]"+finaltab[i]+"\n");
+				}
+				nbrbatch--;
+				added=false;
+			}
+			if(nbBatchAjouté>=problem.getN()){
+				fin=true;
+			}
+		}
+		for (int i = 0; i < problem.getN(); i++) {
+
+			finaltab[i]=finaltab[i];
+			finaltab[i]=Math.abs(finaltab[i]);
+			//log.println("fintab["+i+"]"+finaltab[i]+"\n");
+		}
+
+		for (int i = 0; i < problem.getN(); i++) {
+
+			sol.getProcessingSchedule()[i].setBatchIndice((int)finaltab[i]);
+			//System.out.println("indice :"+indice[i]+"\n");
+		}
+		sol.setNbrBatch(Math.abs(nbrbatch));
+		sol.evaluate();
+		//log.println(sol.toString());
+		return sol;
+	}
+	public int indexMinimumSize(double indice[]){
+		int index=-1;
+		double minimum=2000000000;
+		for(int i=0;i<problem.getN();++i){
+			//log.println("D "+indice[i]);
+			if(indice[i] != -1){
+				if( (problem.getJobData()[i].getSize()) <= minimum){
+					index=i;
+					minimum=indice[i];
+				}
+			}
+
+			//System.out.println("minimum:"+minimum);
+		}
+
+		return index;
 	}
 	protected void solve() {
 		/**
@@ -206,7 +314,7 @@ introduits.
 			}
 		}while(sol.evaluate() <0);*/
 		// Creation d'une bonne solution initial valide
-		sol=init2();
+		sol=initMinimizeBatch();
 		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
 		duréeTaboue=15;
@@ -253,7 +361,7 @@ introduits.
 
 			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
 			if (irerationSansAmelio > 300){
-				nbrBatch--;
+				nbrBatch++;
 				log.println("nb batch:"+nbrBatch);
 				sol.setNbrBatch(nbrBatch);
 				irerationSansAmelio=0;
