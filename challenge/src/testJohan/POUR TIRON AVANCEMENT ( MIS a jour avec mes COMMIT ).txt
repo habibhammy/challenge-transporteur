@@ -17,8 +17,8 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 005			215						215
 007a		2581					2581
 007			245						245
-020a		210						200 
-050a		290						250    
+020a		200						200 
+050a		280						250    
 100a		135132 (1 seul test)  	49 392  
 200a		509867 (1 seul test		323 955
 

@@ -48,9 +48,11 @@ introduits.
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * solves the problem
-	 */
+/**
+ * Fonction init qui donne une valeur valide pour un nombre de batch
+ * @param nbrbatch
+ * @return
+ */
 	public GSupplyLinkSolution init(int nbrbatch){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 
@@ -65,6 +67,11 @@ introduits.
 		}
 		return sol;
 	}
+	/**
+	 * Fonction init qui est sencé trouvé une valeur initial tres "bonne"
+	 * Mais qui est beaucoup trop gourmande .... donc inutile
+	 * @return
+	 */
 	public GSupplyLinkSolution init2(){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 		boolean fin=false;
@@ -177,28 +184,38 @@ introduits.
 		log.println(sol.toString());
 		return sol;
 	}
+	/**
+	 * Fonction qui essaye de trouver une solution  initial qui minimize le nombre de batch
+	 * Ce qui permet par la suite d'avoir a chercher juste en augmentant le nombre de batch
+	 * @return
+	 */
 	public GSupplyLinkSolution initMinimizeBatch(){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem);
 		boolean fin=false;
 		double sommeVolume=0;
 		int nbrbatch = -1;
 		boolean added=false;
+		//Tableau  des valeur qu'il reste à ajouter
 		double indice[]=new double[problem.getN()];
+		// Tableau de la solution final xD
 		double finaltab[]=new double[problem.getN()];
+		//initialisation du tableau indice
 		for(int i=0;i<problem.getN();++i){
 			indice[i]=problem.getJobData()[i].getSize();
 
 		}
 		int nbBatchAjouté=0;
+		// indice des job qui vont constitué le prochain batch
 		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
 		while(!fin){
+			//Retourne l'index qui correspond au plus petit volume, si il n'y a plus de job a ajouté , retourn -1
 			int index=indexMinimumSize(indice);
+			
 			if(index != -1){
 				//log.println("Index minimum"+index);
 				//log.println("Volume mini:"+problem.getJobData()[index].getSize());
 				sommeVolume+=problem.getJobData()[index].getSize();
 				if(sommeVolume > problem.getTransporter(0).getCapacity()){
-					//log.println("ICI");
 					sommeVolume-=problem.getJobData()[index].getSize();
 					added=true;
 				}else{
@@ -207,15 +224,14 @@ introduits.
 					//log.println("indicebach.add "+index);
 					indice[index]=-1;
 				}
-				
-				
+
 				if(sommeVolume < problem.getTransporter(0).getCapacity()){
 					for(int i=0;i<indice.length;i++){
 					//	log.println("Somme : "+sommeVolume);
 						if(indice[i]!=-1){
 							if( sommeVolume + problem.getJobData()[i].getSize()==problem.getTransporter(0).getCapacity() ){
-								//log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
-								//log.println("indicebach.add "+i);
+							//	log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
+							//	log.println("indicebach.add "+i);
 								indiceBatch.add(i);
 								added=true;
 								break;
@@ -232,9 +248,9 @@ introduits.
 			}
 
 			if(added){
-				//log.println("AJOUT");
+			//	log.println("AJOUT");
 				while(!indiceBatch.isEmpty()){
-				//	log.println("AJOUT "+indiceBatch.get(indiceBatch.size()-1));
+					//log.println("AJOUT "+indiceBatch.get(indiceBatch.size()-1));
 					finaltab[indiceBatch.get(indiceBatch.size()-1)]=nbrbatch;
 					sommeVolume=0;
 					indice[indiceBatch.get(indiceBatch.size()-1)]=-1;
@@ -263,43 +279,29 @@ introduits.
 			sol.getProcessingSchedule()[i].setBatchIndice((int)finaltab[i]);
 			//System.out.println("indice :"+indice[i]+"\n");
 		}
-		sol.setNbrBatch(Math.abs(nbrbatch));
+		sol.setNbrBatch(Math.abs(nbrbatch)-1);
 		sol.evaluate();
-		//log.println(sol.toString());
+		log.println(sol.toString());
 		return sol;
 	}
+	//Méthode qui retourne l'index de la valeur minimum du tableau différente de -1
+	// si il n'y en a pas , retourne -1
 	public int indexMinimumSize(double indice[]){
 		int index=-1;
 		double minimum=2000000000;
 		for(int i=0;i<problem.getN();++i){
-			//log.println("D "+indice[i]);
 			if(indice[i] != -1){
 				if( (problem.getJobData()[i].getSize()) <= minimum){
 					index=i;
 					minimum=indice[i];
 				}
 			}
-
-			//System.out.println("minimum:"+minimum);
 		}
 
 		return index;
 	}
 	protected void solve() {
-		/**
-		 * Schéma de l’algorithme tabou de base
-			• Engendrer une configuration initiale S0 ; S := S0
-			• S* := S ; f* := f(S)
-			• T := {} // liste taboue
-			• Répéter
-				– m := le meilleur mouvement parmi les mouvements non tabous et les
-				mouvements tabous exceptionnels (critère d’aspiration)
-				– S := S (+) m
-				– Si f(S) < f(S*) faire S* := S ; f* := f(S)
-				– Mettre T à jour ;
-			• Jusqu’à <condition fin>
-			• Retourner S*
-		 */
+
 		// Création d'une solution initiale aléatoire valide
 		GSupplyLinkSolution sol;
 		/*int nbrBatch=1;
@@ -313,24 +315,24 @@ introduits.
 				nbrBatch++;
 			}
 		}while(sol.evaluate() <0);*/
-		// Creation d'une bonne solution initial valide
+		// Creation d'une bonne solution initial qui minimize le nombre de batch
 		sol=initMinimizeBatch();
 		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
+		//durée des mouvements tabous
 		duréeTaboue=15;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
+		//Temps qu'il reste du temps
 		while (true) {
-			//Creation de la liste de voisin de la derniere solution
+			//Creation de la liste de voisin de la derniere solution 
 			creerListeCandidats(sol,nbMvt);
-			//MAJ liste tabou
-
-
-			// Si la meilleur solution trouvé dans les voisins est TABOU , on augmente le nombre de mouvement
+			
+			//*********************************MAJ liste tabou
+			// Si la meilleur solution trouvé est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
 				if(listeTabou.get(i).getSol().toString().compareTo(meilleurCandidats.toString()) == 0){
 					estDejaTaboue=true;
-					//nbMvt=3;
 				}
 			}
 			//on ajoute dans la liste que les mvt qui n'y sont pas deja
@@ -339,8 +341,9 @@ introduits.
 				nbMvt=1;
 			}
 			estDejaTaboue=false;
+			//la solution initiale devient le clone du meilleur voisin
 			sol=meilleurCandidats.clone();
-			log.println(sol.toString());
+			//log.println(sol.toString());
 
 
 			// Evaluation of the newly built solution 
