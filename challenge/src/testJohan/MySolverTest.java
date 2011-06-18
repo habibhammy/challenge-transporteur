@@ -4,6 +4,7 @@ import java.util.List;
 
 import gproblem.GJobData;
 import gproblem.GSupplyLinkProblem;
+import gsolution.GJobVariable;
 import gsolution.GSupplyLinkSolution;
 import gsolver.GSolver;
 
@@ -52,8 +53,8 @@ introduits.
 		int nbrbatch = (int) (rand.nextDouble()*problem.getN())+1 ;
 		sol.setNbrBatch(nbrbatch);
 		for (int i=0;i<problem.getN();++i) {
-			int batch = 1;
-			//int batch = (int) (rand.nextDouble()*nbrbatch)+1 ;
+			//	int batch = 1;
+			int batch = (int) (rand.nextDouble()*nbrbatch)+1 ;
 			sol.getProcessingSchedule()[i].setBatchIndice(batch) ;
 			sol.getProcessingSchedule()[i].setDeliveryCompletionTime((double)batch) ;
 		}
@@ -75,19 +76,23 @@ introduits.
 			• Jusqu’à <condition fin>
 			• Retourner S*
 		 */
-		// Configuration initiale
-		GSupplyLinkSolution sol = init();
-		
+		// Création d'une solution initiale aléatoire valide
+		GSupplyLinkSolution sol;
+		do {
+			sol = init();
+		}while(sol.evaluate() <0);
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution
 			creerListeCandidats(sol);
-			//
-			
+
+
 			//MeilleurVoisins parmit les candidats
-			sol=getMeilleurCandidats();
-			
+			sol=meilleurCandidats.clone();
+
+			//MAJ liste tabou
+
 			// Evaluation of the newly built solution 
-			double eval = sol.evaluate() ;
+			//double eval = sol.evaluate() ;
 
 			if (sol.getEvaluation()>=0) {
 				if (bestSolution==null || sol.getEvaluation()<bestSolution.getEvaluation()) { 
@@ -99,6 +104,7 @@ introduits.
 				}
 			}
 			iteration ++  ;
+			log.println ("Iteration="+iteration) ;
 		}
 	}
 	/**
@@ -106,19 +112,40 @@ introduits.
 	 * @param sol
 	 */
 	public void creerListeCandidats(GSupplyLinkSolution sol){
+		double meilleurVal=sol.getEvaluation();
+		double eval=0;
+		//Initialisation de temp au valeur de sol
+		GSupplyLinkSolution temp=sol.clone();
+		GSupplyLinkSolution best=sol.clone();
 		//Creation de la liste
-		
+		System.out.println(sol.toString());
+		// Boucle de génération  et test des voisins
+		for (int i=0;i<problem.getN();i++) {
+			for (int j=1;j<problem.getN();++j){
+				temp.getProcessingSchedule()[i].setBatchIndice( (sol.getProcessingSchedule()[i].getBatchIndice()+j)%(problem.getN()) ) ;
+				if(temp.getProcessingSchedule()[i].getBatchIndice()==0){
+					temp.getProcessingSchedule()[i].setBatchIndice(problem.getN());
+				}
+				eval=temp.evaluate();
+				if(eval != -1 && eval <= meilleurVal){
+					meilleurVal=eval;
+					best=temp.clone();
+				}
+				temp=sol.clone();
+			}
+		}
+		System.out.println("\n\n\nMeilleur voisin:"+best.toString());
 		//fin creation liste
 		//Evaluation du meilleur voisins de cette liste
-		this.meilleurCandidats=evalListeCandidats();
+		this.meilleurCandidats=best;
 	}
 
-		public GSupplyLinkSolution evalListeCandidats(){
-			GSupplyLinkSolution mSol=null;
-			return mSol;
-		}
+	public GSupplyLinkSolution evalListeCandidats(){
+		GSupplyLinkSolution mSol=null;
+		return mSol;
+	}
 	public GSupplyLinkSolution getMeilleurCandidats() {
 		return meilleurCandidats;
 	}
-	
+
 }
