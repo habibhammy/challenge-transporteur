@@ -84,16 +84,16 @@ introduits.
 		// Création d'une solution initiale aléatoire valide
 
 		GSupplyLinkSolution sol;
-		int nbrBatch=50;
+		int nbrBatch=1;
 		int compte=0;
 		do {
 			compte++;
 			sol = init(nbrBatch);
 			// si on a essayé de crée 100 sol initial qui ne marche pas , on increment le nb de batch
-			/*if(compte > 1000){
+			if(compte > 1000){
 				compte=0;
 				nbrBatch++;
-			}*/
+			}
 		}while(sol.evaluate() <0);
 		log.println("BATCH DE DEPART"+nbrBatch);
 		duréeTaboue=10;
