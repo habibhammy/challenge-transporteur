@@ -36,7 +36,7 @@ public class MainTest {
 	
 	public static void main(String args[]) {
 		
-		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance200a.txt") ;
+		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance020a.txt") ;
 		System.out.println("PROBLEM="+pb.toString()+"\n") ;
 
 		// New solver

@@ -12,18 +12,23 @@ Resultat , l'algo trouve la solution optimale en moin de 100 iteration ! ( le pl
 
 Fonction ajouté : le nombre de batch est "trouvé" par l'application
 
-Resultat sur les fichier :
+NEW RESULTAT apres correction d'une coquille :D
+
+
+Resultat sur les fichier (EN 5Sec !!!!) :
 Fichier		resultatDmonAlgo		resultat donné par le prof
 005			215						215
-007a		3728					2581
+007a		2581					2581
 007			245						245
 020a		340-350-380				200
-050a		790						250
-100a		303 380					49 392
+050a		790						250    
+100a		303 380					49 392  
 200a		988 895					323 955
 
-bon j'ai pas changé les valeurs des durée tabou dans ces test,mais bon... ya encore enormement de boulot ^^'
-
+normalement l'algo doit tourne 
+- 10 secondes pour les petites instances (50 jobs)
+- 30 secondes pour les moyennes instances (100 jobs)
+- 1 minutes pour les grandes instances (200 jobs)
 
 à faire : essayer de faire evoluer la durée tabou 
 

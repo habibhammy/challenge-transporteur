@@ -90,13 +90,13 @@ introduits.
 			compte++;
 			sol = init(nbrBatch);
 			// si on a essayé de crée 100 sol initial qui ne marche pas , on increment le nb de batch
-			if(compte > 100){
+			if(compte > 300){
 				compte=0;
 				nbrBatch++;
 			}
 		}while(sol.evaluate() <0);
-		
-		duréeTaboue=15;
+		log.println("BATCH DE DEPART"+nbrBatch);
+		duréeTaboue=10;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		while (true) {
@@ -141,7 +141,9 @@ introduits.
 			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
 			if (irerationSansAmelio > 300){
 				nbrBatch++;
+				log.println("nb batch:"+nbrBatch);
 				sol.setNbrBatch(nbrBatch);
+				irerationSansAmelio=0;
 			}
 			
 			
