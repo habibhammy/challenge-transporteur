@@ -18,7 +18,7 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 007a		2581					2581
 007			245						245
 020a		260-270-300				200 
-050a		790						250    
+050a		500						250    
 100a		303 380					49 392  
 200a		988 895					323 955
 
@@ -28,8 +28,12 @@ normalement l'algo doit tourne
 - 1 minutes pour les grandes instances (200 jobs)
 
 
-à faire (prioritaire ): Crée une meilleure solution initiale , pour l'instant c'est une solution aleatoire valide, 
-c'est inutilisable pour les fichier > 20
+à Abandonné ^^', j'ai essayé de faire une solution initial ( init2() )qui donne directement une tres bonne solution , sa marcche pour les instance
+005 et 007, mais c'est beaucoup trop incompréhensible !
+
+a faire :
+La meilleur solution est de faire une solution initiale (valide...) qui Minimise le nombre de batch! comme ça on a juste a explorer pour ce 
+nombre de batch et les nombres plus grand !
 
 à faire : essayer de faire evoluer la durée tabou 
 

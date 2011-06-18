@@ -21,7 +21,7 @@ public class MySolverTest extends GSolver {
 	//Nombre d'iteration sans amélioration de la fonction objectives
 	private int irerationSansAmelio=0;
 	//Meilleur solution trouvé	
-	
+
 	//Durée taboue
 	private int duréeTaboue;
 	//Critere d'aspiration :
@@ -65,7 +65,118 @@ introduits.
 		}
 		return sol;
 	}
+	public GSupplyLinkSolution init2(){
+		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
+		boolean fin=false;
+		int nombreJob=problem.getN()-1;
+		GJobData[] tempo= new GJobData[nombreJob+1];
+		GJobData lastDate=null;
+		double sommeVolume=0;
+		boolean debutBatch=true;
+		double cout = problem.getTransporter(0).getDeliveryTime();
+		int nbrbatch = 1;
+		int indice[]=new int[problem.getN()];
+		while(!fin){
+			//System.out.println(nombreJob);
+			if(debutBatch){			
+				tempo[nombreJob]=problem.getJobData()[nombreJob];
+				lastDate = problem.getJobData()[nombreJob];
+				sommeVolume=problem.getJobData()[nombreJob].getSize();
+				debutBatch=false;
+			}else{
+				//Si la difference entre les deux date est inférieure au temps aller retour
+				if (lastDate.getDueDate() - problem.getJobData()[nombreJob].getDueDate() < cout) {
+					tempo[nombreJob] = problem.getJobData()[nombreJob];
+					sommeVolume+=problem.getJobData()[nombreJob].getSize();
+					//System.out.println("volume"+sommeVolume);
+					System.out.println("ICI");
+				}else{
+					//Sinon
+					// Si la somme des volume est inferieure a la capacité , création d'un batch
 
+					if(sommeVolume <= problem.getTransporter(0).getCapacity()){
+						// creation d'un batch
+						System.out.println("capacity: "+problem.getTransporter(0).getCapacity());
+						for(int k=0; k < problem.getN();k++){
+							if(tempo[k]!=null){
+								System.out.println("ajout");
+								indice[k]=nbrbatch;
+								tempo[k]=null;
+								sommeVolume=0;
+								System.out.println("nb job"+nombreJob);
+							}
+						}
+						nbrbatch++;
+						debutBatch=true;
+						nombreJob++;
+					}else{
+
+					}
+				}
+
+			}
+
+			if(nombreJob == 0){
+				for(int k= problem.getN()-1; k >0;k--){
+					if(tempo[k]!=null){
+						nombreJob=k;
+						break;
+					}
+				}
+				sommeVolume=0;
+				//parcour de la liste des job 
+				boolean matchFinded=false;
+				ArrayList<Integer> test = new ArrayList<Integer>();
+				while(!matchFinded && nombreJob >0){
+					sommeVolume+=problem.getJobData()[nombreJob].getSize();
+					test.add(nombreJob);
+					for (int j = nombreJob-1; j >= 0; --j) {
+						//if(tempo[j]!= null ){
+							if( sommeVolume + problem.getJobData()[j].getSize()==problem.getTransporter(0).getCapacity() ){
+								test.add(j);
+								System.out.println("MATCH");
+								while(!test.isEmpty()){
+									
+									indice[test.get(test.size()-1)]=nbrbatch;
+									tempo[test.get(test.size()-1)]=null;
+									System.out.println("tempo["+test.get(test.size()-1)+"]=null");
+									sommeVolume=0;
+									matchFinded=true;
+									test.remove(test.size()-1);
+								}
+								nbrbatch++;
+							}
+					}
+					nombreJob--;
+
+				}
+				nombreJob=0;
+			}
+			if(nombreJob == 0){
+				fin=true;
+			}
+			nombreJob--;
+
+		}
+		for (int i = 0; i < problem.getN(); i++) {
+			System.out.println("tempo["+i+"]"+tempo[i]+"\n");
+		}
+		System.out.println(nbrbatch);
+		sol.setNbrBatch(nbrbatch);
+		for (int i = 0; i < problem.getN(); i++) {
+			if(indice[i]==0){
+				indice[i]=nbrbatch;
+			}
+			System.out.println("indice :"+indice[i]+"\n");
+			indice[i]=Math.abs(indice[i]-nbrbatch)+1;	
+			sol.getProcessingSchedule()[i].setBatchIndice(indice[i]);
+			//System.out.println("indice :"+indice[i]+"\n");
+		}
+		
+		sol.evaluate();
+		log.println(sol.toString());
+		return sol;
+	}
 	protected void solve() {
 		/**
 		 * Schéma de l’algorithme tabou de base
@@ -82,9 +193,8 @@ introduits.
 			• Retourner S*
 		 */
 		// Création d'une solution initiale aléatoire valide
-
 		GSupplyLinkSolution sol;
-		int nbrBatch=1;
+		/*int nbrBatch=1;
 		int compte=0;
 		do {
 			compte++;
@@ -94,17 +204,20 @@ introduits.
 				compte=0;
 				nbrBatch++;
 			}
-		}while(sol.evaluate() <0);
+		}while(sol.evaluate() <0);*/
+		// Creation d'une bonne solution initial valide
+		sol=init2();
+		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
-		duréeTaboue=10;
+		duréeTaboue=15;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution
 			creerListeCandidats(sol,nbMvt);
 			//MAJ liste tabou
-			
-			
+
+
 			// Si la meilleur solution trouvé dans les voisins est TABOU , on augmente le nombre de mouvement
 			for(int i =0;i <listeTabou.size();++i){
 				if(listeTabou.get(i).getSol().toString().compareTo(meilleurCandidats.toString()) == 0){
@@ -120,7 +233,7 @@ introduits.
 			estDejaTaboue=false;
 			sol=meilleurCandidats.clone();
 			log.println(sol.toString());
-			
+
 
 			// Evaluation of the newly built solution 
 			//double eval = sol.evaluate() ;
@@ -137,20 +250,20 @@ introduits.
 			}
 			iteration ++  ;
 			irerationSansAmelio++;
-			
+
 			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
 			if (irerationSansAmelio > 300){
-				nbrBatch++;
+				nbrBatch--;
 				log.println("nb batch:"+nbrBatch);
 				sol.setNbrBatch(nbrBatch);
 				irerationSansAmelio=0;
 			}
-			
-			
+
+
 			// Reduction de la durée tabou des mvt tabou de 1
-		//	log.println("\n LISTE TABOU :");
+			//	log.println("\n LISTE TABOU :");
 			for(int i =0;i <listeTabou.size();++i){
-				
+
 				//log.println(listeTabou.get(i).getSol().toString());
 				if(listeTabou.get(i).reductionDuréeTabou()){
 					listeTabou.remove(i);
@@ -174,11 +287,11 @@ introduits.
 		//Initialisation de temp au valeur de sol
 		GSupplyLinkSolution temp=sol.clone();
 		GSupplyLinkSolution best=sol.clone();
-		
+
 		//nb d'evaluation a -1
 		int compte=0;
 		//Creation de la liste
-	//	System.out.println(sol.toString());
+		//	System.out.println(sol.toString());
 		// Boucle de génération  et test des voisins
 		//log.println(sol.toString());
 		for (int i=0;i<problem.getN();i++) {
@@ -199,13 +312,13 @@ introduits.
 					}
 				}
 				//Ajout d'un voisin a la liste
-				
-			//	log.println(temp.toString());
+
+				//	log.println(temp.toString());
 				listeVoisin.add(temp);
 				eval=temp.evaluate();
-			
-					//log.println(temp.toString());
-			
+
+				//log.println(temp.toString());
+
 				//log.println("eval:"+eval);
 				if(eval != -1 && eval <= meilleurVal){
 					//test si la valeur est tabou
@@ -218,7 +331,7 @@ introduits.
 					if(!tabou){
 						meilleurVal=eval;
 						best=temp.clone();
-						
+
 					}
 					tabou=false;
 				}
@@ -228,15 +341,15 @@ introduits.
 						//Si il n'y a pas de meilleur solution trouvé , on affecte aleatoirement une solution voisine
 						//Probleme : temps important si bcp de voisin ...
 						//log.println("BEST:\n"+best.toString());
-					
+
 						int r = (int) (rand.nextDouble()*(listeVoisin.size()));
-						
+
 						best=listeVoisin.get(r);
 					}
 				}
 				temp=sol.clone();
 			}
-			
+
 		}
 		//log.println("\n\n\nMeilleur voisin:"+best.toString());
 		//fin creation liste
