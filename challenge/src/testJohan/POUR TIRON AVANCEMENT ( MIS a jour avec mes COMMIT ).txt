@@ -18,7 +18,7 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 007a		2581					2581
 007			245						245
 020a		200						200 
-050a		280						250    
+050a		280						250    < probleme
 100a		135132 (1 seul test)  	49 392  
 200a		509867 (1 seul test		323 955
 
@@ -27,11 +27,11 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 Abandonné ^^', j'ai essayé de faire une solution initial ( init2() )qui donne directement une tres bonne solution , sa marcche pour les instance
 005 et 007, mais c'est beaucoup trop incompréhensible !
 
-Fait initMinimizeBatch()
+Fait initMinimizeBatch() -> AMELIORATION : Son on veut minimiser juste le nombre de voyage , sa revient pas juste au probleme du sac à dos ?
 La meilleur solution est de faire une solution initiale (valide...) qui Minimise le nombre de batch! comme ça on a juste a explorer pour ce 
 nombre de batch et les nombres plus grand !
 
-à faire : essayer de faire evoluer la durée tabou 
+à faire : faire evoluer la durée tabou 
 
 Réglage auto-adaptatif de la longueur de la liste taboue
  technique consiste à laisser la longueur de la liste taboue se régler

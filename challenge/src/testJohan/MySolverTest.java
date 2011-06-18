@@ -324,6 +324,7 @@ introduits.
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		//Temps qu'il reste du temps
+		int nombreBatchnegatif=0;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
 			creerListeCandidats(sol,nbMvt);
@@ -363,8 +364,14 @@ introduits.
 			irerationSansAmelio++;
 
 			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
+		
+			
 			if (irerationSansAmelio > 300){
-				nbrBatch++;
+				/*if(nombreBatchnegatif > 5){
+				nbrBatch--;
+				}else{*/
+					nbrBatch++;
+			//	}
 				log.println("nb batch:"+nbrBatch);
 				sol.setNbrBatch(nbrBatch);
 				irerationSansAmelio=0;
