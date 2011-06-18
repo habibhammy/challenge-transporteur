@@ -1,0 +1,6 @@
+Fonctionnement de mon programme :
+
+Creé aleatoirement une solution valide, cherche tous les voisins de cette solution , les évalues.
+Si un voisins est meilleurs, on le selectionne et on cherche ces voisins ...
+
+Pour l'instant des qu'un optimum local est trouvé l'algo reste bloqué dedans, car la liste tabou n'est pas encore faite ...
