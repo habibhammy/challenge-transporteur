@@ -14,6 +14,8 @@ public class MySolverTest extends GSolver {
 	private GSupplyLinkSolution meilleurCandidats;
 	//Liste Tabou	
 	private ArrayList<Tabou> listeTabou = new ArrayList<Tabou>();
+	//liste de voisins
+	private ArrayList<GSupplyLinkSolution> listeVoisin = new ArrayList<GSupplyLinkSolution>();
 	//Nombre d'iteration
 	private int iteration = 0 ;
 	//Nombre d'iteration sans amélioration de la fonction objectives
@@ -146,10 +148,12 @@ introduits.
 		double meilleurVal=2000000000;
 		double eval=0;
 		boolean tabou=false;
+		listeVoisin.clear();
 		GSupplyLinkSolution taboue;
 		//Initialisation de temp au valeur de sol
 		GSupplyLinkSolution temp=sol.clone();
 		GSupplyLinkSolution best=sol.clone();
+		
 		//nb d'evaluation a -1
 		int compte=0;
 		//Creation de la liste
@@ -173,7 +177,10 @@ introduits.
 						}
 					}
 				}
-				//log.println(temp.toString());
+				//Ajout d'un voisin a la liste
+				
+			//	log.println(temp.toString());
+				listeVoisin.add(temp);
 				eval=temp.evaluate();
 			
 					//log.println(temp.toString());
@@ -197,9 +204,13 @@ introduits.
 				if(eval== -1){
 					compte++;
 					if (compte==problem.getN()*(sol.getNbrBatch()-1)){
-						//Si il n'y a pas de meilleur solution trouvé , on affecte la derniere solution crée
+						//Si il n'y a pas de meilleur solution trouvé , on affecte aleatoirement une solution voisine
+						//Probleme : temps important si bcp de voisin ...
 						//log.println("BEST:\n"+best.toString());
-						best=temp.clone();
+					
+						int r = (int) (rand.nextDouble()*(listeVoisin.size()));
+						
+						best=listeVoisin.get(r);
 					}
 				}
 				temp=sol.clone();
