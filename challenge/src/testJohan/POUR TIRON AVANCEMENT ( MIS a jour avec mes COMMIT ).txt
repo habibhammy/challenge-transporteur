@@ -10,6 +10,26 @@ Solution trouvé : Creation d'une liste de voisin, si tous les voisins sont evalu
 
 Resultat , l'algo trouve la solution optimale en moin de 100 iteration ! ( le plus souvent ... )
 
-Travail à faire:
-Pour l'instant je lui indiquai que le nombre de batch etait de 3. maintenant il va falloir que l'algorithme trouve la valeur 245 sans ça ...
-( c'est pas gagné ! )
+Fonction ajouté : le nombre de batch est "trouvé" par l'application
+
+Resultat sur les fichier :
+Fichier		resultatDmonAlgo		resultat donné par le prof
+005			215						215
+007a		3728					2581
+007			245						245
+020a		340-350-380				200
+050a		790						250
+100a		303 380					49 392
+200a		988 895					323 955
+
+bon j'ai pas changé les valeurs des durée tabou dans ces test,mais bon... ya encore enormement de boulot ^^'
+
+
+à faire : essayer de faire evoluer la durée tabou 
+
+Réglage auto-adaptatif de la longueur de la liste taboue
+ technique consiste à laisser la longueur de la liste taboue se régler
+elle-même au cours de la recherche :
+- Si on observe que l’algorithme tend à cycler (ou tend à rester confiné dans la
+même région), on augmente la longueur de la liste
+- Sinon on la réduit légèrement

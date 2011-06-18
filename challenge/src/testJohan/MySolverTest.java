@@ -51,15 +51,15 @@ introduits.
 	/**
 	 * solves the problem
 	 */
-	public GSupplyLinkSolution init(){
+	public GSupplyLinkSolution init(int nbrbatch){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 
 		//int nbrbatch = (int) (rand.nextDouble()*problem.getN())+1 ;
-		int nbrbatch=3;
+		;
 		sol.setNbrBatch(nbrbatch);
 		for (int i=0;i<problem.getN();++i) {
 			//	int batch = 1;
-			int batch = (int) (rand.nextDouble()*nbrbatch)+1 ;
+			int batch = (int) (rand.nextDouble()* nbrbatch)+1 ;
 			sol.getProcessingSchedule()[i].setBatchIndice(batch) ;
 			sol.getProcessingSchedule()[i].setDeliveryCompletionTime((double)batch) ;
 		}
@@ -82,9 +82,18 @@ introduits.
 			• Retourner S*
 		 */
 		// Création d'une solution initiale aléatoire valide
+
 		GSupplyLinkSolution sol;
+		int nbrBatch=1;
+		int compte=0;
 		do {
-			sol = init();
+			compte++;
+			sol = init(nbrBatch);
+			// si on a essayé de crée 100 sol initial qui ne marche pas , on increment le nb de batch
+			if(compte > 100){
+				compte=0;
+				nbrBatch++;
+			}
 		}while(sol.evaluate() <0);
 		
 		duréeTaboue=15;
@@ -123,9 +132,19 @@ introduits.
 					// Nouveau message Ã  destination du log (ecran+fichier)
 					log.println ("Iteration="+iteration) ;
 					log.println ("New Best Solution = "+sol.getEvaluation()+"\n") ;
+					irerationSansAmelio=0;
 				}
 			}
 			iteration ++  ;
+			irerationSansAmelio++;
+			
+			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
+			if (irerationSansAmelio > 300){
+				nbrBatch++;
+				sol.setNbrBatch(nbrBatch);
+			}
+			
+			
 			// Reduction de la durée tabou des mvt tabou de 1
 		//	log.println("\n LISTE TABOU :");
 			for(int i =0;i <listeTabou.size();++i){
@@ -135,7 +154,7 @@ introduits.
 					listeTabou.remove(i);
 				}
 			}
-			log.println ("Iteration="+iteration) ;
+			//log.println ("Iteration="+iteration) ;
 			//log.println ("Solution = "+sol.getEvaluation()+"\n") ;
 			//log.println (sol.toString()) ;
 		}
