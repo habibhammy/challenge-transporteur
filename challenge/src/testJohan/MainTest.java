@@ -39,16 +39,12 @@ public class MainTest {
 		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance007.txt") ;
 		System.out.println("PROBLEM="+pb.toString()+"\n") ;
 
-		GSupplyLinkSolution sol2 = new GSupplyLinkSolution(pb, "data/instance007a-sol02.txt") ;
-		sol2.evaluate();
-		System.out.println (sol2.toString()+"\n") ;
-
 		// New solver
 		/*GSolver solv = new GSolver(pb, sol2) ;
 		solv.start() ;	*/
 		
 
-		MySolver solv = new MySolver(pb);
+		MySolverTest solv = new MySolverTest(pb);
 		solv.start();
 
 	}
