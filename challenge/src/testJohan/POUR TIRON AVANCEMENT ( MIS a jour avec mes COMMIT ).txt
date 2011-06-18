@@ -4,7 +4,26 @@ Creé aleatoirement une solution valide, cherche tous les voisins de cette soluti
 Si un voisins est meilleurs, on le selectionne et on cherche ces voisins ...
 
 Liste tabou de base implémenté, probleme rencontrer : il n'est pas rare que tous les "voisins" 
-sont des solution qui on une capacité trop grande...
+sont des solution qui on une capacité trop grande ou tabou.
 
-En cours:
-autorisé l'algo à passer par ces solutions.
+Premiere solution trouvé au probleme :
+autorisé l'algo à passer par ces solutions( Lorsque toutes les solutions sont invalide ou tabou , on prend la derniere solution crée 
+comme mouvement )
+
+Sur 10 test( ou moins ... ) pour un nombre de batch fix de 3 duréetabou 10:
+meilleur solution trouvé :
+
+duréetabou: 10		5 		15		
+			340		525		245
+			245		525		245
+			340		340		340
+			475		500		475
+			340		590		475
+			340		500		245
+			340				475
+			340
+			475
+			340
+			
+Bon apparament c'est pas encore tres fiable ^^' les solutions trouvé pour l'instant sont trouvé en moin de 50 Iterations...
+Donc quand on est pas a la valeur Optimal de 245 , il reste environ 3500 iteration qui sont faite et pourtant on tombe pas sur le 245 xD

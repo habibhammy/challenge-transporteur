@@ -85,12 +85,11 @@ introduits.
 			sol = init();
 		}while(sol.evaluate() <0);
 		
-		duréeTaboue=5;
+		duréeTaboue=15;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution
-			log.println("nb mvt"+nbMvt);
 			creerListeCandidats(sol,nbMvt);
 			//MAJ liste tabou
 			
@@ -135,7 +134,7 @@ introduits.
 				}
 			}
 			log.println ("Iteration="+iteration) ;
-			log.println ("Solution = "+sol.getEvaluation()+"\n") ;
+			//log.println ("Solution = "+sol.getEvaluation()+"\n") ;
 			//log.println (sol.toString()) ;
 		}
 	}
@@ -173,29 +172,35 @@ introduits.
 							temp.getProcessingSchedule()[batch].setBatchIndice(sol.getNbrBatch());
 						}
 					}
-					//log.println("NEW MVT AUTO");
-					//temp.evaluate();
-					//log.println(temp.toString());
 				}
 				//log.println(temp.toString());
 				eval=temp.evaluate();
-				
+			
 					//log.println(temp.toString());
-				if(eval== -1){
-					compte++;
-				}
+			
+				//log.println("eval:"+eval);
 				if(eval != -1 && eval <= meilleurVal){
 					//test si la valeur est tabou
 					for(int k=0;k<listeTabou.size();k++){
 						if (temp.toString().compareTo((listeTabou.get(k)).getSol().toString()) == 0){
 							tabou=true;
+							compte++;
 						}
 					}
 					if(!tabou){
 						meilleurVal=eval;
 						best=temp.clone();
+						
 					}
 					tabou=false;
+				}
+				if(eval== -1){
+					compte++;
+					if (compte==problem.getN()*(sol.getNbrBatch()-1)){
+						//Si il n'y a pas de meilleur solution trouvé , on affecte la derniere solution crée
+						//log.println("BEST:\n"+best.toString());
+						best=temp.clone();
+					}
 				}
 				temp=sol.clone();
 			}
@@ -204,7 +209,7 @@ introduits.
 		//log.println("\n\n\nMeilleur voisin:"+best.toString());
 		//fin creation liste
 		//Evaluation du meilleur voisins de cette liste
-		log.println("COmpte"+compte);
+		//log.println("COmpte"+compte);
 		this.meilleurCandidats=best;
 	}
 
