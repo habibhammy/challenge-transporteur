@@ -8,10 +8,6 @@ sont des solution qui on une capacité trop grande ou tabou.
 
 Solution trouvé : Creation d'une liste de voisin, si tous les voisins sont evaluate a -1 ou TABOU, alors on prend aleatoirement un voisin
 
-Resultat , l'algo trouve la solution optimale en moin de 100 iteration ! ( le plus souvent ... )
-
-Fonction ajouté : le nombre de batch est "trouvé" par l'application <- fonctionne pas pour les nb de produits
-
 Resultat sur les fichier avec les bon temps d'execution mais durée tabou fixe:
 Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 005			215						215
@@ -26,7 +22,6 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 200a		695 509              	323 955
 Pour les 100a et 200a le nombre de batch de depart est correcte (trouvé en 16 ms sur 60sec pour le 200) , mais ensuite...
 l'algo ne fait que 50 iteration donc , c'est la qu'il faut travaillé :D ( surement sur la recherche des voisins trop gourmande)
-
 
 
 Fait initMinimizeBatch() -> j'ai amelioré la fonction an la remplacant pour l'instant par une fonction initMinimizeBatch2()
