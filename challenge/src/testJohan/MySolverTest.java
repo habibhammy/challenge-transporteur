@@ -453,7 +453,7 @@ introduits.
 			
 			//log.println("avant "+this.getElapsedTimeString());
 			avant=this.getElapsedTime();
-			creerListeCandidats(sol,nbMvt);
+			creerListeCandidats(sol);
 			//log.println("apres "+this.getElapsedTimeString());
 			tempsCalculVoisin+=this.getElapsedTime()-avant;
 			moyenne=tempsCalculVoisin/(iteration+1);
@@ -528,7 +528,7 @@ introduits.
 	 * Creation de la liste des voisins de sol
 	 * @param sol
 	 */
-	public void creerListeCandidats(GSupplyLinkSolution sol,int nbMvtAutorisé){
+	public void creerListeCandidats(GSupplyLinkSolution sol){
 		double meilleurVal=2000000000;
 		double eval=0;
 		boolean tabou=false;
@@ -550,17 +550,6 @@ introduits.
 				temp.getProcessingSchedule()[i].setBatchIndice( ((sol.getProcessingSchedule()[i].getBatchIndice()+j)%(sol.getNbrBatch()))) ;
 				if(temp.getProcessingSchedule()[i].getBatchIndice()==0){
 					temp.getProcessingSchedule()[i].setBatchIndice(sol.getNbrBatch());
-				}
-				if(nbMvtAutorisé > 1){
-					for(int k=1;k<nbMvtAutorisé;k++){
-						//Si plusieur mvt sont autorisé , on choisi un batch aleatoirement et on l'incremente
-						int batch = (int) (rand.nextDouble()*sol.getNbrBatch()+1);
-
-						temp.getProcessingSchedule()[batch].setBatchIndice( (sol.getProcessingSchedule()[batch].getBatchIndice()+j)%(sol.getNbrBatch()) ) ;	
-						if(temp.getProcessingSchedule()[batch].getBatchIndice()==0){
-							temp.getProcessingSchedule()[batch].setBatchIndice(sol.getNbrBatch());
-						}
-					}
 				}
 				//Ajout d'un voisin a la liste
 				//Correction du Bug du nombre de batch qui ne commence pas à 1
