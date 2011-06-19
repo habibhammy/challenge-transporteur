@@ -19,7 +19,7 @@ public class MySolverTest extends GSolver {
 	//Nombre d'iteration
 	private int iteration = 0 ;
 	//Nombre d'iteration sans amélioration de la fonction objectives
-	private int irerationSansAmelio=0;
+	private int iterationSansAmelio=0;
 	//Meilleur solution trouvé	
 
 	//Durée taboue
@@ -306,6 +306,7 @@ introduits.
 
 		}
 		int nbBatchAjouté=0;
+		
 		// indice des job qui vont constitué le prochain batch
 		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
 		while(!fin){
@@ -446,20 +447,22 @@ introduits.
 		int nbMvt=1;
 		//Temps qu'il reste du temps
 		long tempsCalculVoisin=0;
+		long tempsSansAmelio=0;
+		long tempsIteration=0;
 		long avant;
 		long moyenne;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
 			
 			//log.println("avant "+this.getElapsedTimeString());
-			avant=this.getElapsedTime();
+			//avant=this.getElapsedTime();
 			creerListeCandidats(sol);
 			//log.println("apres "+this.getElapsedTimeString());
-			tempsCalculVoisin+=this.getElapsedTime()-avant;
-			moyenne=tempsCalculVoisin/(iteration+1);
-			log.println("Temps cumulé du calcul des voisins"+this.getTimeString(tempsCalculVoisin));
-			log.println("Moyenne par recherche "+this.getTimeString(moyenne));
-			log.println("Iteration "+iteration);
+		//	tempsCalculVoisin+=this.getElapsedTime()-avant;
+			//moyenne=tempsCalculVoisin/(iteration+1);
+			//log.println("Temps cumulé du calcul des voisins"+this.getTimeString(tempsCalculVoisin));
+		//	log.println("Moyenne par recherche "+this.getTimeString(moyenne));
+		//	log.println("Iteration "+iteration);
 			//*********************************MAJ liste tabou
 			// Si la meilleur solution trouvé est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
@@ -489,24 +492,29 @@ introduits.
 					log.println ("Iteration="+iteration+"trouvé en "+this.getElapsedTimeString()) ;
 					log.println ("New Best Solution = "+sol.getEvaluation()+"\n") ;
 					log.println("nb batch:"+nbrBatch);
-					irerationSansAmelio=0;
+					iterationSansAmelio=0;
+					tempsIteration+=tempsSansAmelio;
+					tempsSansAmelio=0;
 				}
 			}
 			iteration ++  ;
-			irerationSansAmelio++;
-
-			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
-			log.println(""+irerationSansAmelio);
+			iterationSansAmelio++;
+			tempsSansAmelio=this.getElapsedTime()-tempsIteration;
 			
-			if (irerationSansAmelio > 30){
+			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
+		//	log.println(""+iterationSansAmelio);
+			
+			if (iterationSansAmelio > 250 || tempsSansAmelio > 500 ){
 				/*if(nombreBatchnegatif > 5){
 				nbrBatch--;
 				}else{*/
 					nbrBatch++;
 			//	}
-				//log.println("nb batch:"+nbrBatch);
+				log.println("nb batch ++ :"+nbrBatch+" ISA "+iterationSansAmelio+" tsa"+this.getTimeString(tempsSansAmelio));
 				sol.setNbrBatch(nbrBatch);
-				irerationSansAmelio=0;
+				iterationSansAmelio=0;
+				tempsIteration+=tempsSansAmelio;
+				tempsSansAmelio=0;
 			}
 
 
@@ -546,7 +554,7 @@ introduits.
 		//log.println(sol.toString());
 		int min;
 		for (int i=0;i<problem.getN();i++) {
-			for (int j=1;j<sol.getNbrBatch();++j){
+			for (int j=1;j<sol.getNbrBatch()-1;++j){
 				temp.getProcessingSchedule()[i].setBatchIndice( ((sol.getProcessingSchedule()[i].getBatchIndice()+j)%(sol.getNbrBatch()))) ;
 				if(temp.getProcessingSchedule()[i].getBatchIndice()==0){
 					temp.getProcessingSchedule()[i].setBatchIndice(sol.getNbrBatch());
@@ -562,7 +570,7 @@ introduits.
 				}
 				//si min est différent de 1 , on corrige
 				if (min > 1){
-					log.println("Correction : -"+(min-1)+" en nb batch");
+					//log.println("Correction : -"+(min-1)+" en nb batch");
 					for(int k=0;k<temp.getProcessingSchedule().length;k++){
 				
 						temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));

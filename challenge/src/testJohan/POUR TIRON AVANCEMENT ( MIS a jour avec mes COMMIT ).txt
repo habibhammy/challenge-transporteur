@@ -16,10 +16,11 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 020a		200						200 
 050a		250						250    ( Trouvé des la solution initial :p )
 050b		310						310    ( Trouvé des la solution initial :p )
-050d		49481					28163  ( probleme : n'a pas le temps de tester assez de batch)
-050e		25192					24281
-100a		73 993 				  	49 392  
-200a		695 509              	323 955
+050d		30518					28163  tempsMaxSansAmelio : 500ms ; durée tabou12
+050e		25028					24281 tabou : 6
+100a		73 993 -> 61133		  	49 392  tabou : 7
+200a		695 509 ->(582643)     	323 955 tabou : 5 
+200b
 Pour les 100a et 200a le nombre de batch de depart est correcte (trouvé en 16 ms sur 60sec pour le 200) , mais ensuite...
 l'algo ne fait que 50 iteration donc , c'est la qu'il faut travaillé :D ( surement sur la recherche des voisins trop gourmande)
 
