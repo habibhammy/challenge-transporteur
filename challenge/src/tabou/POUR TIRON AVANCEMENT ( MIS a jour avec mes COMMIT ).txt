@@ -1,0 +1,17 @@
+
+Resultat sur les fichier avec les bon temps d'execution mais durée tabou fixe:
+Fichier		MeilleurResDmonAlgo		resultat donné par le prof
+005			215						215
+007a		2581					2581
+007			245						245
+020a		200						200 
+050a		250						250    ( Trouvé des la solution initial :p )
+050b		310						310    ( Trouvé des la solution initial :p )
+050d		30518-28890				28163  tempsMaxSansAmelio : 500ms ; durée tabou12
+050e		25028- 24708			24281  
+100a		43 349 -40825		  	49 392  
+100b 		78 637	-65 701			53 054 
+100c		123 760- 83259			61 574	
+100t		60 484	-44451			44 686	
+200a		582643- 101579   	323 955 tabou 5  1 sec
+
