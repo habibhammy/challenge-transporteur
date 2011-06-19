@@ -447,6 +447,7 @@ introduits.
 		//Temps qu'il reste du temps
 		long tempsCalculVoisin=0;
 		long avant;
+		long moyenne;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
 			
@@ -455,7 +456,9 @@ introduits.
 			creerListeCandidats(sol,nbMvt);
 			//log.println("apres "+this.getElapsedTimeString());
 			tempsCalculVoisin+=this.getElapsedTime()-avant;
+			moyenne=tempsCalculVoisin/(iteration+1);
 			log.println("Temps cumulé du calcul des voisins"+this.getTimeString(tempsCalculVoisin));
+			log.println("Moyenne par recherche"+this.getTimeString(moyenne));
 			//*********************************MAJ liste tabou
 			// Si la meilleur solution trouvé est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
