@@ -458,7 +458,8 @@ introduits.
 			tempsCalculVoisin+=this.getElapsedTime()-avant;
 			moyenne=tempsCalculVoisin/(iteration+1);
 			log.println("Temps cumulé du calcul des voisins"+this.getTimeString(tempsCalculVoisin));
-			log.println("Moyenne par recherche"+this.getTimeString(moyenne));
+			log.println("Moyenne par recherche "+this.getTimeString(moyenne));
+			log.println("Iteration "+iteration);
 			//*********************************MAJ liste tabou
 			// Si la meilleur solution trouvé est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
@@ -543,6 +544,7 @@ introduits.
 		//	System.out.println(sol.toString());
 		// Boucle de génération  et test des voisins
 		//log.println(sol.toString());
+		int min;
 		for (int i=0;i<problem.getN();i++) {
 			for (int j=1;j<sol.getNbrBatch();++j){
 				temp.getProcessingSchedule()[i].setBatchIndice( ((sol.getProcessingSchedule()[i].getBatchIndice()+j)%(sol.getNbrBatch()))) ;
@@ -561,7 +563,24 @@ introduits.
 					}
 				}
 				//Ajout d'un voisin a la liste
-
+				//Correction du Bug du nombre de batch qui ne commence pas à 1
+				min=temp.getNbrBatch();
+				//Recherche de l'indice du batch mini
+				for(int k=0;k<temp.getProcessingSchedule().length;k++){
+					if (temp.getProcessingSchedule()[k].getBatchIndice() < min){
+						min=temp.getProcessingSchedule()[k].getBatchIndice();
+					}
+				}
+				//si min est différent de 1 , on corrige
+				if (min > 1){
+					log.println("Correction : -"+(min-1)+" en nb batch");
+					for(int k=0;k<temp.getProcessingSchedule().length;k++){
+				
+						temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
+					
+					}
+					temp.setNbrBatch(temp.getNbrBatch()-(min-1));
+				}
 				//	log.println(temp.toString());
 				listeVoisin.add(temp);
 				eval=temp.evaluate();
@@ -605,24 +624,7 @@ introduits.
 		//Evaluation du meilleur voisins de cette liste
 		//log.println("COmpte"+compte);
 		
-		//Correction du Bug du nombre de batch qui ne commence pas à 1
-		int min=best.getNbrBatch();
-		//Recherche de l'indice du batch mini
-		for(int i=0;i<best.getProcessingSchedule().length;i++){
-			if (best.getProcessingSchedule()[i].getBatchIndice() < min){
-				min=best.getProcessingSchedule()[i].getBatchIndice();
-			}
-		}
-		//si min est différent de 1 , on corrige
-		if (min > 1){
-			log.println("Correction : -"+(min-1)+" en nb batch");
-			for(int i=0;i<best.getProcessingSchedule().length;i++){
 		
-					best.getProcessingSchedule()[i].setBatchIndice(best.getProcessingSchedule()[i].getBatchIndice()-(min-1));
-			
-			}
-			best.setNbrBatch(best.getNbrBatch()-(min-1));
-		}
 		
 		this.meilleurCandidats=best;
 	}

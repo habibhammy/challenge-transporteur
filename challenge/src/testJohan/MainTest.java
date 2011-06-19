@@ -36,7 +36,7 @@ public class MainTest {
 	
 	public static void main(String args[]) {
 		
-		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance100a.txt") ;
+		GSupplyLinkProblem pb = new GSupplyLinkProblem("data/instance200a.txt") ;
 		System.out.println("PROBLEM="+pb.toString()+"\n") ;
 
 		// New solver
@@ -46,7 +46,7 @@ public class MainTest {
 
 		MySolverTest solv = new MySolverTest(pb);
 		//Temps pour un fichier taille 200
-		solv.setSolvingTime(30000);
+		solv.setSolvingTime(60000);
 		solv.start();
 		//solv.initMinimizeBatch2();
 	}
