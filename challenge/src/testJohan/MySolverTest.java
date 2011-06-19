@@ -474,7 +474,7 @@ introduits.
 					// Nouveau message Ã  destination du log (ecran+fichier)
 					log.println ("Iteration="+iteration+"trouvé en "+this.getElapsedTimeString()) ;
 					log.println ("New Best Solution = "+sol.getEvaluation()+"\n") ;
-					
+					log.println("nb batch:"+nbrBatch);
 					irerationSansAmelio=0;
 				}
 			}
@@ -591,6 +591,26 @@ introduits.
 		//fin creation liste
 		//Evaluation du meilleur voisins de cette liste
 		//log.println("COmpte"+compte);
+		
+		//Correction du Bug du nombre de batch qui ne commence pas à 1
+		int min=best.getNbrBatch();
+		//Recherche de l'indice du batch mini
+		for(int i=0;i<best.getProcessingSchedule().length;i++){
+			if (best.getProcessingSchedule()[i].getBatchIndice() < min){
+				min=best.getProcessingSchedule()[i].getBatchIndice();
+			}
+		}
+		//si min est différent de 1 , on corrige
+		if (min > 1){
+			log.println("Correction : -"+(min-1)+" en nb batch");
+			for(int i=0;i<best.getProcessingSchedule().length;i++){
+		
+					best.getProcessingSchedule()[i].setBatchIndice(best.getProcessingSchedule()[i].getBatchIndice()-(min-1));
+			
+			}
+			best.setNbrBatch(best.getNbrBatch()-(min-1));
+		}
+		
 		this.meilleurCandidats=best;
 	}
 
