@@ -19,18 +19,22 @@ Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 007			245						245
 020a		200						200 
 050a		250						250    ( Trouvé des la solution initial :p )
-100a		135132 (1 seul test)  	49 392  
-200a		509867 (1 seul test		323 955
-
+050b		310						310    ( Trouvé des la solution initial :p )
+100a		177723 				  	49 392  
+200a		755320              	323 955
+Pour les 100a et 200a le nombre de batch de depart est correcte (trouvé en 16 ms sur 60sec pour le 200) , mais ensuite...
+l'algo ne fait que 50 iteration donc , c'est la qu'il faut travaillé :D ( surement sur la recherche des voisins trop gourmande)
 
 
 Abandonné ^^', j'ai essayé de faire une solution initial ( init2() )qui donne directement une tres bonne solution , sa marcche pour les instance
 005 et 007, mais c'est beaucoup trop incompréhensible !
 
-Fait initMinimizeBatch() -> j'ai amelioré la fonction an la remplacant pour l'instant par une fonction initMinimizeBatch()
+Fait initMinimizeBatch() -> j'ai amelioré la fonction an la remplacant pour l'instant par une fonction initMinimizeBatch2()
 qui donne le vrai nombre de batch mini.
 Le probleme maintenant pour les grand nombre d'objet, c'est que ma recherche de voisin est beaucoup trop gourmande ! du coup sa fait a peine 
 100 iteration :D
+
+Prioritaire : OPTIMISER LA RECHERCHE DES VOISIN !
 
 à faire : faire evoluer la durée tabou 
 

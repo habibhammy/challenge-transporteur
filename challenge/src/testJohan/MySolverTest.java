@@ -433,6 +433,7 @@ introduits.
 		}while(sol.evaluate() <0);*/
 		// Creation d'une bonne solution initial qui minimize le nombre de batch
 		sol=initMinimizeBatch2();
+		log.println(this.getElapsedTimeString());
 		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
 		//durée des mouvements tabous
