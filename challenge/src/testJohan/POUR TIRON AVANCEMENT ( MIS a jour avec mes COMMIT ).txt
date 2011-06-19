@@ -16,7 +16,7 @@ Resultat sur les fichier avec les bon temps d'execution mais durée tabou fixe:
 Fichier		MeilleurResDmonAlgo		resultat donné par le prof
 005			215						215
 007a		2581					2581
-007			245						245
+007			295(Voir apres)			245
 020a		200						200 
 050a		250						250    ( Trouvé des la solution initial :p )
 050b		310						310    ( Trouvé des la solution initial :p )
@@ -26,15 +26,33 @@ Pour les 100a et 200a le nombre de batch de depart est correcte (trouvé en 16 ms
 l'algo ne fait que 50 iteration donc , c'est la qu'il faut travaillé :D ( surement sur la recherche des voisins trop gourmande)
 
 
-Abandonné ^^', j'ai essayé de faire une solution initial ( init2() )qui donne directement une tres bonne solution , sa marcche pour les instance
-005 et 007, mais c'est beaucoup trop incompréhensible !
 
 Fait initMinimizeBatch() -> j'ai amelioré la fonction an la remplacant pour l'instant par une fonction initMinimizeBatch2()
 qui donne le vrai nombre de batch mini.
 Le probleme maintenant pour les grand nombre d'objet, c'est que ma recherche de voisin est beaucoup trop gourmande ! du coup sa fait a peine 
 100 iteration :D
 
-Prioritaire : OPTIMISER LA RECHERCHE DES VOISIN !
+idée ( on augmente le nombre de batch si la solution n'a pas été améliorer pendant X solution , pendant X seconde c'est p-e mieux)
+
+Probleme rencontré ( à corrigé prioritairement !!) : 
+
+Solution 007.txt, on peut voir qu'il n'y a pas de batch numero 1 , donc le nbrdeBatch est faux donc on trouve 295 a la place de 245 !
+(ce probleme arrive aussi dans d'autre test !)
+bestSolution = [[nbrBatch=4, evaluation=295.0, evaluationCustomer=95.0, evaluationTransporter=200.0
+  bi=[2, 2, 3, 2, 3, 4, 4]
+  Ci=[980.0, 980.0, 1030.0, 980.0, 1030.0, 1100.0, 1100.0]]
+ Normalement :
+ bestSolution = [[nbrBatch=3, evaluation=245.0, evaluationCustomer=95.0, evaluationTransporter=150.0
+  bi=[1, 1, 2, 1, 2, 3, 3]
+  Ci=[980.0, 980.0, 1030.0, 980.0, 1030.0, 1100.0, 1100.0]]
+  
+ 50d ( avec nombreIterationSansAmelio < 30 ) 
+bestSolution = [[nbrBatch=34, evaluation=41111.11772688329, evaluationCustomer=15629.228463982612, evaluationTransporter=25481.889262900677
+  bi=[10, 26, 32, 13, 7, 14, 30, 8, 9, 27, 11, 12, 28, 16, 34, 17, 31, 18, 19, 20, 21, 33, 22, 21, 20, 23, 33, 15, 25, 25, 34, 29, 22, 24, 24, 19, 25, 23, 31, 24, 29, 22, 24, 23, 27, 17, 31, 23, 25, 32]
+  Ci=[9566.153391811064, 11258.957417282962, 11665.422629343224, 9751.502520021264, 9380.804263600863, 9813.285562757997, 11507.766280291555, 9442.587306337597, 9504.37034907433, 11320.740460019695, 9627.936434547797, 9689.71947728453, 11384.200194818088, 9936.851648231464, 11851.291426627802, 9998.634690968198, 11603.63958660649, 10060.417733704931, 10122.200776441665, 10183.983819178398, 10245.766861915132, 11789.508383891069, 10307.549904651865, 10245.766861915132, 10183.983819178398, 10419.25478397921, 11789.508383891069, 9875.068605494731, 10996.004669397338, 10996.004669397338, 11851.291426627802, 11445.983237554821, 10307.549904651865, 10783.595043477602, 10783.595043477602, 10122.200776441665, 10996.004669397338, 10419.25478397921, 11603.63958660649, 10783.595043477602, 11445.983237554821, 10307.549904651865, 10783.595043477602, 10419.25478397921, 11320.740460019695, 9998.634690968198, 11603.63958660649, 10419.25478397921, 10996.004669397338, 11665.422629343224]]
+
+
+A faire aussi : OPTIMISER LA RECHERCHE DES VOISIN !
 
 à faire : faire evoluer la durée tabou 
 

@@ -437,7 +437,7 @@ introduits.
 		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
 		//durée des mouvements tabous
-		duréeTaboue=15;
+		duréeTaboue=5;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		//Temps qu'il reste du temps
@@ -472,8 +472,9 @@ introduits.
 					bestSolution = sol ;
 
 					// Nouveau message Ã  destination du log (ecran+fichier)
-					log.println ("Iteration="+iteration) ;
+					log.println ("Iteration="+iteration+"trouvé en "+this.getElapsedTimeString()) ;
 					log.println ("New Best Solution = "+sol.getEvaluation()+"\n") ;
+					
 					irerationSansAmelio=0;
 				}
 			}
@@ -481,9 +482,9 @@ introduits.
 			irerationSansAmelio++;
 
 			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
-			//log.println(""+irerationSansAmelio);
+			log.println(""+irerationSansAmelio);
 			
-			if (irerationSansAmelio > 250){
+			if (irerationSansAmelio > 30){
 				/*if(nombreBatchnegatif > 5){
 				nbrBatch--;
 				}else{*/
