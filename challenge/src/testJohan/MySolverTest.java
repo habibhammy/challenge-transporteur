@@ -53,6 +53,7 @@ introduits.
  * @param nbrbatch
  * @return
  */
+	@Deprecated
 	public GSupplyLinkSolution init(int nbrbatch){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 
@@ -72,6 +73,7 @@ introduits.
 	 * Mais qui est beaucoup trop gourmande .... donc inutile
 	 * @return
 	 */
+	@Deprecated
 	public GSupplyLinkSolution init2(){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem) ;
 		boolean fin=false;
@@ -189,6 +191,7 @@ introduits.
 	 * Ce qui permet par la suite d'avoir a chercher juste en augmentant le nombre de batch
 	 * @return
 	 */
+	@Deprecated
 	public GSupplyLinkSolution initMinimizeBatch(){
 		GSupplyLinkSolution sol = new GSupplyLinkSolution(problem);
 		boolean fin=false;
@@ -388,6 +391,7 @@ introduits.
 	}
 	//Méthode qui retourne l'index de la valeur minimum du tableau différente de -1
 	// si il n'y en a pas , retourne -1
+	@Deprecated
 	public int indexMinimumSize(double indice[]){
 		int index=-1;
 		double minimum=2000000000;
@@ -441,11 +445,17 @@ introduits.
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		//Temps qu'il reste du temps
-		int nombreBatchnegatif=0;
+		long tempsCalculVoisin=0;
+		long avant;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
-			creerListeCandidats(sol,nbMvt);
 			
+			//log.println("avant "+this.getElapsedTimeString());
+			avant=this.getElapsedTime();
+			creerListeCandidats(sol,nbMvt);
+			//log.println("apres "+this.getElapsedTimeString());
+			tempsCalculVoisin+=this.getElapsedTime()-avant;
+			log.println("Temps cumulé du calcul des voisins"+this.getTimeString(tempsCalculVoisin));
 			//*********************************MAJ liste tabou
 			// Si la meilleur solution trouvé est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
