@@ -442,7 +442,7 @@ introduits.
 		int nbrBatch=sol.getNbrBatch();
 		log.println("BATCH DE DEPART"+nbrBatch);
 		//durée des mouvements tabous
-		duréeTaboue=5;
+		duréeTaboue=12;
 		boolean estDejaTaboue=false;
 		int nbMvt=1;
 		//Temps qu'il reste du temps
