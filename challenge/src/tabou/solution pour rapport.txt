@@ -1,4 +1,8 @@
 Valeur arondie, sans les instance 150 comme on connait pas le temps de référence.
+PC de test :
+Processeur	Intel(R) Pentium(R) CPU        P6100  @ 2.00GHz, 1999 MHz, 2 cœur(s), 2 processeur(s) logique(s)
+Mémoire physique totale	3,86 Go
+
 
 instance005.txt		215
 instance007.txt		245
