@@ -1,10 +1,8 @@
 package tabou;
-import java.util.ArrayList;
-import java.util.List;
 
-import gproblem.GJobData;
+
+import java.util.ArrayList;
 import gproblem.GSupplyLinkProblem;
-import gsolution.GJobVariable;
 import gsolution.GSupplyLinkSolution;
 import gsolver.GSolver;
 
@@ -20,19 +18,8 @@ public class MySolverTabou extends GSolver {
 	private int iteration = 0 ;
 	//Nombre d'iteration sans amélioration de la fonction objectives
 	private int iterationSansAmelio=0;
-	//Meilleur solution trouvé	
-
 	//Durée taboue
 	private int duréeTaboue;
-	//Critere d'aspiration :
-	/**Un mécanisme d’aspiration détermine un critère selon lequel un mouvement,
-bien que tabou, peut quand même être accepté. Il faut faire attention,
-cependant, au risque d’introduire à nouveau des cycles dans la recherche.
-• Par exemple, un critère d’aspiration rudimentaire peut consister à accepter un
-mouvement s’il conduit à une configuration meilleure que la meilleure
-configuration déjà trouvée. Des mécanismes plus sophistiqués peuvent être
-introduits.
-	 **/
 	public MySolverTabou() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -73,7 +60,7 @@ introduits.
 
 		}
 		int nbBatchAjouté=0;
-
+		
 		// indice des job qui vont constitué le prochain batch
 		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
 		while(!fin){
@@ -81,58 +68,39 @@ introduits.
 			int index=indexMaxiSize(indice);
 
 			if(index != -1){
-				//	log.println("Index maxi"+index);
-				//	log.println("Volume maxi:"+problem.getJobData()[index].getSize());
 				sommeVolume+=problem.getJobData()[index].getSize();
 				if(sommeVolume > problem.getTransporter(0).getCapacity()){
 					sommeVolume-=problem.getJobData()[index].getSize();
 					added=true;
 				}else{
-					//log.println("Somme : "+sommeVolume);
 					indiceBatch.add(index);
-					//	log.println("indicebach.add "+index);
 					indice[index]=-1;
 				}
 
 				if(sommeVolume < problem.getTransporter(0).getCapacity()){
 					for(int i=0;i<indice.length;i++){
-						//log.println("Somme : "+sommeVolume);
 						if(indice[i]!=-1){
 							if( sommeVolume + problem.getJobData()[i].getSize()<=problem.getTransporter(0).getCapacity() ){
 								sommeVolume+=problem.getJobData()[i].getSize();
-								//log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
-								//log.println("indicebach.add "+i);
 								indiceBatch.add(i);
 								added=true;
-								//break;
 							}
 						}
 					}
 				}else{
-					//log.println("autre cas");
-					//indiceBatch.remove(indiceBatch.size()-1);
 					added=true;
 				}
 			}else{
 				added=true;
 			}
-			int test=0;
 			if(added){
-				//log.println("AJOUT");
 				while(!indiceBatch.isEmpty()){
-					//	log.println("AJOUT "+indiceBatch.get(indiceBatch.size()-1));
 					finaltab[indiceBatch.get(indiceBatch.size()-1)]=nbrbatch;
 					sommeVolume=0;
-					test+=problem.getJobData()[indiceBatch.get(indiceBatch.size()-1)].getSize();
 					indice[indiceBatch.get(indiceBatch.size()-1)]=-1;
 					indiceBatch.remove(indiceBatch.size()-1);
 					nbBatchAjouté++;
 				}
-				//log.println("xD"+Math.abs(nbrbatch)+" "+test);
-				test=0;
-				//for (int i = 0; i < problem.getN(); i++) {
-				//	log.println("fintab["+i+"]"+finaltab[i]+"\n");
-				//}
 				nbrbatch--;
 				added=false;
 			}
@@ -141,20 +109,15 @@ introduits.
 			}
 		}
 		for (int i = 0; i < problem.getN(); i++) {
-
 			finaltab[i]=finaltab[i];
 			finaltab[i]=Math.abs(finaltab[i]);
-			//	log.println("fintab["+i+"]"+finaltab[i]+"\n");
 		}
 
 		for (int i = 0; i < problem.getN(); i++) {
-
 			sol.getProcessingSchedule()[i].setBatchIndice((int)finaltab[i]);
-			//System.out.println("indice :"+indice[i]+"\n");
 		}
 		sol.setNbrBatch(Math.abs(nbrbatch)-1);
 		sol.evaluate();
-		log.println(sol.toString());
 		return sol;
 	}
 	//Méthode qui retourne l'index de la valeur maximum du tableau différente de -1
@@ -171,28 +134,37 @@ introduits.
 				}
 			}
 		}
-
 		return index;
 	}
 	protected void solve() {
-
-		// Création d'une solution initiale aléatoire valide
+		System.out.close();
 		GSupplyLinkSolution sol;
 		// Creation d'une bonne solution initial qui minimize le nombre de batch
 		sol=initMinimizeBatch2();
-
 		int nbrBatch=sol.getNbrBatch();
-		log.println("BATCH DE DEPART"+nbrBatch);
-		//durée des mouvements tabous
-		duréeTaboue=12;
+		if(problem.getN()==200){
+			setSolvingTime(60000);
+		}
+		if(problem.getN()==100){
+			setSolvingTime(30000);
+		}
+		if(problem.getN()==50){
+			setSolvingTime(10000);
+		}
+		if(problem.getN()>=50){
+			duréeTaboue=10;
+		}else{
+			duréeTaboue=5;
+		}
 		boolean estDejaTaboue=false;
-		//Temps qu'il reste du temps
 		long tempsSansAmelio=0;
+		long refTempsSansAmelio=500;
 		long tempsIteration=0;
 		Mouvement mvtTabou;
+		boolean iterSansAmelio=false;
+		int test=1;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
-
 			mvtTabou=creerListeCandidats(sol);
 			//*********************************MAJ liste tabou
 			// Si la meilleur solution trouvé est deja dans la liste tabou
@@ -212,29 +184,29 @@ introduits.
 
 
 			// Evaluation of the newly built solution 
-			//double eval = sol.evaluate() ;
-
 			if (sol.getEvaluation()>=0) {
 				if (bestSolution==null || sol.getEvaluation()<bestSolution.getEvaluation()) { 
 					bestSolution = sol ;
-					// Nouveau message Ã  destination du log (ecran+fichier)
-					log.println ("Iteration="+iteration+"trouvé en "+this.getElapsedTimeString()) ;
-					log.println ("New Best Solution = "+sol.getEvaluation()+"\n") ;
-					log.println("nb batch:"+nbrBatch);
 					iterationSansAmelio=0;
 					tempsIteration+=tempsSansAmelio;
 					tempsSansAmelio=0;
+					iterSansAmelio=false;
 				}
 			}
 			iteration ++  ;
 			iterationSansAmelio++;
 			tempsSansAmelio=this.getElapsedTime()-tempsIteration;
-			//log.println("Nombre iteration: "+iteration);
-			//Si on dépasse un certain nombre d'iteration sans amelioration, on change de nombre de batch
-			// ou un temps sans amelioration
-			if (iterationSansAmelio > 250 || tempsSansAmelio > 500 ){
-				nbrBatch++;
-				log.println("nb batch ++ :"+nbrBatch+" ISA "+iterationSansAmelio+" tsa"+this.getTimeString(tempsSansAmelio));
+
+			//Si on dépasse un certain nombre d'iteration ou un temps sans amelioration, on change de nombre de batch
+			if (iterationSansAmelio > 250 || tempsSansAmelio > refTempsSansAmelio ){			
+				if(iterSansAmelio==true){
+					refTempsSansAmelio=4000;
+					test=-1;
+				}
+				if(test==1){
+					nbrBatch++;
+				}
+				iterSansAmelio=true;
 				sol.setNbrBatch(nbrBatch);
 				iterationSansAmelio=0;
 				tempsIteration+=tempsSansAmelio;
@@ -249,9 +221,6 @@ introduits.
 					listeTabou.remove(i);
 				}
 			}
-			//log.println ("Iteration="+iteration) ;
-			//log.println ("Solution = "+sol.getEvaluation()+"\n") ;
-			//log.println (sol.toString()) ;
 		}
 	}
 	/**
@@ -261,7 +230,6 @@ introduits.
 	public Mouvement creerListeCandidats(GSupplyLinkSolution sol){
 		double meilleurVal=2000000000;
 		double eval=0;
-		boolean tabou=false;
 		listeVoisin.clear();
 		Mouvement mvtTabou=null;
 		Mouvement testTabou=null;
@@ -302,7 +270,7 @@ introduits.
 					temp.evaluate();
 					//Critere d'aspiration
 					if(temp.getEvaluation() > 0 && temp.getEvaluation() < bestSolution.getEvaluation()){
-						log.println("ASPIRATIONNNNNNNNNNNNNNNNNNNNNNNNN");
+						//log.println("ASPIRATIONNNNNNNNNNNNNNNNNNNNNNNNN");
 						estTaboue=false;
 					}
 
