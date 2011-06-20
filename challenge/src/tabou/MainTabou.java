@@ -34,7 +34,7 @@ public class MainTabou {
 	 solv.start();
  }
 	public static void main(String args[]) {
-		MainTabou mt = new MainTabou("instance050c.txt",10000);
+		MainTabou mt = new MainTabou("instance200a.txt",30000);
 
 	}
 }
