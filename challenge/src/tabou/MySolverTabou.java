@@ -34,8 +34,11 @@ public class MySolverTabou extends GSolver {
 		super(problem);
 		// TODO Auto-generated constructor stub
 	}
-
-
+	public MySolverTabou(GSupplyLinkProblem problem, int tps) {
+		super(problem);
+		this.setSolvingTime(tps);
+		// TODO Auto-generated constructor stub
+	}
 
 
 	/**
@@ -142,15 +145,7 @@ public class MySolverTabou extends GSolver {
 		// Creation d'une bonne solution initial qui minimize le nombre de batch
 		sol=initMinimizeBatch2();
 		int nbrBatch=sol.getNbrBatch();
-		if(problem.getN()==200){
-			setSolvingTime(60000);
-		}
-		if(problem.getN()==100){
-			setSolvingTime(30000);
-		}
-		if(problem.getN()==50){
-			setSolvingTime(10000);
-		}
+
 		if(problem.getN()>=50){
 			duréeTaboue=10;
 		}else{
@@ -249,7 +244,6 @@ public class MySolverTabou extends GSolver {
 			for(int i =0;i <listeTabou.size();++i){
 				if(listeTabou.get(i).compareTo(testTabou) == 0){
 					estTaboue=true;
-					//log.println("EST TABOU !!!!!!!!!!!");
 					temp.getProcessingSchedule()[indiceSheldule].setBatchIndice(batch) ;
 					min=temp.getNbrBatch();
 					for(int k=0;k<temp.getProcessingSchedule().length;k++){
@@ -259,11 +253,8 @@ public class MySolverTabou extends GSolver {
 					}
 					//si min est différent de 1 , on corrige
 					if (min > 1){
-						//log.println("Correction : -"+(min-1)+" en nb batch");
 						for(int k=0;k<temp.getProcessingSchedule().length;k++){
-
 							temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
-
 						}
 						temp.setNbrBatch(temp.getNbrBatch()-(min-1));
 					}
@@ -288,11 +279,8 @@ public class MySolverTabou extends GSolver {
 				}
 				//si min est différent de 1 , on corrige
 				if (min > 1){
-					//log.println("Correction : -"+(min-1)+" en nb batch");
 					for(int k=0;k<temp.getProcessingSchedule().length;k++){
-
 						temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
-
 					}
 					temp.setNbrBatch(temp.getNbrBatch()-(min-1));
 				}

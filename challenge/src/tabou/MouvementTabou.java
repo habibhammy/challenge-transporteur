@@ -1,6 +1,5 @@
 package tabou;
 
-import gsolution.GSupplyLinkSolution;
 
 /**
  * Classe représentant la structure de la liste Taboue
@@ -37,7 +36,6 @@ public class MouvementTabou {
 		return mouv;
 	}
 	public int compareTo(Mouvement mvtTabou,int duréeTaboue) {
-		// TODO Auto-generated method stub
 		if(this.mouv.getIndiceBatch() == mvtTabou.getIndiceBatch() && this.mouv.getIndiceProcessingSchedule()==mvtTabou.getIndiceProcessingSchedule()){
 			this.duréeTaboue=duréeTaboue;
 			return 0;
@@ -45,7 +43,6 @@ public class MouvementTabou {
 		return 1;
 	}
 	public int compareTo(Mouvement mvtTabou) {
-		// TODO Auto-generated method stub
 		if(this.mouv.getIndiceBatch() == mvtTabou.getIndiceBatch() && this.mouv.getIndiceProcessingSchedule()==mvtTabou.getIndiceProcessingSchedule()){
 			return 0;
 		}
