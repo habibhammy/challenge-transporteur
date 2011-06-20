@@ -7,14 +7,13 @@ import gsolution.GSupplyLinkSolution;
 import gsolver.GSolver;
 
 public class MySolverTabou extends GSolver {
-	/** Variable à créer **/
 	//Meilleur voisins
 	private GSupplyLinkSolution meilleurCandidats;
 	//Liste de mouvement tabou
 	private ArrayList<MouvementTabou> listeTabou = new ArrayList<MouvementTabou>();
 	//Nombre d'iteration
 	private int iteration = 0 ;
-	//Nombre d'iteration sans amélioration de la fonction objectives
+	//Nombre d'iteration sans amélioration 
 	private int iterationSansAmelio=0;
 	//Durée taboue
 	private int duréeTaboue;
