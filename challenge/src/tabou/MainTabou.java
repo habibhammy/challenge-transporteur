@@ -22,14 +22,6 @@ package tabou;
 
 import gproblem.GSupplyLinkProblem;
 
-
-/**
- * 
- * @author Olivier Grunder
- * @version 0.03
- * @date 22 avril 2011
- *
- */
 public class MainTabou {
  public MainTabou(String file){
 	 GSupplyLinkProblem pb = new GSupplyLinkProblem("data/"+file) ;

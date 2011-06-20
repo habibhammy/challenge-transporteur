@@ -1,5 +1,7 @@
 package tabou;
-
+/**
+* Classe représentant un mouvement de l'algorithme
+ */
 public class Mouvement {
 
 	private int indiceProcessingSchedule;

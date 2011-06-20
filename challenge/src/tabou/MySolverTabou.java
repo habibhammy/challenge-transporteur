@@ -10,7 +10,7 @@ public class MySolverTabou extends GSolver {
 	/** Variable à créer **/
 	//Meilleur voisins
 	private GSupplyLinkSolution meilleurCandidats;
-	//Liste Tabou	
+	//Liste de mouvement tabou
 	private ArrayList<MouvementTabou> listeTabou = new ArrayList<MouvementTabou>();
 	//Nombre d'iteration
 	private int iteration = 0 ;
@@ -151,12 +151,18 @@ public class MySolverTabou extends GSolver {
 		}else{
 			duréeTaboue=5;
 		}
+		// Mouvement est Deja dans la liste taboue = faux
 		boolean estDejaTaboue=false;
+		// Temps sans amelioration de la bestSolution
 		long tempsSansAmelio=0;
-		long refTempsSansAmelio=500;
+		//Temps maximum sans amelioration
+		long maxTpsSansAmelio=500;
+		//Temps pour une itération
 		long tempsIteration=0;
+		// Mouvement tabou
 		Mouvement mvtTabou;
-		boolean iterSansAmelio=false;
+		// boolean  oui si le batch à amelioré la bestSolution 
+		boolean batchSansAmelio=false;
 		int test=1;
 		while (true) {
 			//Creation de la liste de voisin de la derniere solution 
@@ -185,7 +191,7 @@ public class MySolverTabou extends GSolver {
 					iterationSansAmelio=0;
 					tempsIteration+=tempsSansAmelio;
 					tempsSansAmelio=0;
-					iterSansAmelio=false;
+					batchSansAmelio=false;
 				}
 			}
 			iteration ++  ;
@@ -193,25 +199,22 @@ public class MySolverTabou extends GSolver {
 			tempsSansAmelio=this.getElapsedTime()-tempsIteration;
 
 			//Si on dépasse un certain nombre d'iteration ou un temps sans amelioration, on change de nombre de batch
-			if (iterationSansAmelio > 250 || tempsSansAmelio > refTempsSansAmelio ){			
-				if(iterSansAmelio==true){
-					refTempsSansAmelio=4000;
+			if (iterationSansAmelio > 250 || tempsSansAmelio > maxTpsSansAmelio ){			
+				if(batchSansAmelio==true){
+					maxTpsSansAmelio=4000;
 					test=-1;
 				}
 				if(test==1){
 					nbrBatch++;
 				}
-				iterSansAmelio=true;
+				batchSansAmelio=true;
 				sol.setNbrBatch(nbrBatch);
 				iterationSansAmelio=0;
 				tempsIteration+=tempsSansAmelio;
 				tempsSansAmelio=0;
 			}
 			// Reduction de la durée tabou des mvt tabou de 1
-			//	log.println("\n LISTE TABOU :");
 			for(int i =0;i <listeTabou.size();++i){
-
-				//log.println(listeTabou.get(i).getSol().toString());
 				if(listeTabou.get(i).reductionDuréeTabou()){
 					listeTabou.remove(i);
 				}
@@ -249,8 +252,8 @@ public class MySolverTabou extends GSolver {
 					temp=optimiserSol(temp,min);
 					temp.evaluate();
 					//Critere d'aspiration
+					// Si le voisin donné par le mouvement taboue a une meilleur evaluation que la BestSolution alors on l'accepte
 					if(temp.getEvaluation() > 0 && temp.getEvaluation() < bestSolution.getEvaluation()){
-						//log.println("ASPIRATIONNNNNNNNNNNNNNNNNNNNNNNNN");
 						estTaboue=false;
 					}
 				}
