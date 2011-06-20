@@ -12,8 +12,6 @@ public class MySolverTabou extends GSolver {
 	private GSupplyLinkSolution meilleurCandidats;
 	//Liste Tabou	
 	private ArrayList<MouvementTabou> listeTabou = new ArrayList<MouvementTabou>();
-	//liste de voisins
-	private ArrayList<GSupplyLinkSolution> listeVoisin = new ArrayList<GSupplyLinkSolution>();
 	//Nombre d'iteration
 	private int iteration = 0 ;
 	//Nombre d'iteration sans amélioration de la fonction objectives
@@ -63,7 +61,7 @@ public class MySolverTabou extends GSolver {
 
 		}
 		int nbBatchAjouté=0;
-		
+
 		// indice des job qui vont constitué le prochain batch
 		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
 		while(!fin){
@@ -123,6 +121,8 @@ public class MySolverTabou extends GSolver {
 		sol.evaluate();
 		return sol;
 	}
+
+
 	//Méthode qui retourne l'index de la valeur maximum du tableau différente de -1
 	// si il n'y en a pas , retourne -1
 
@@ -219,13 +219,13 @@ public class MySolverTabou extends GSolver {
 		}
 	}
 	/**
-	 * Creation de la liste des voisins de sol
+	 * Met à jours la variable meilleur solution 
+	 * retourne le mouvement tabou
 	 * @param sol
 	 */
 	public Mouvement creerListeCandidats(GSupplyLinkSolution sol){
 		double meilleurVal=2000000000;
 		double eval=0;
-		listeVoisin.clear();
 		Mouvement mvtTabou=null;
 		Mouvement testTabou=null;
 		//Initialisation de temp au valeur de sol
@@ -246,25 +246,13 @@ public class MySolverTabou extends GSolver {
 					estTaboue=true;
 					temp.getProcessingSchedule()[indiceSheldule].setBatchIndice(batch) ;
 					min=temp.getNbrBatch();
-					for(int k=0;k<temp.getProcessingSchedule().length;k++){
-						if (temp.getProcessingSchedule()[k].getBatchIndice() < min){
-							min=temp.getProcessingSchedule()[k].getBatchIndice();
-						}
-					}
-					//si min est différent de 1 , on corrige
-					if (min > 1){
-						for(int k=0;k<temp.getProcessingSchedule().length;k++){
-							temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
-						}
-						temp.setNbrBatch(temp.getNbrBatch()-(min-1));
-					}
+					temp=optimiserSol(temp,min);
 					temp.evaluate();
 					//Critere d'aspiration
 					if(temp.getEvaluation() > 0 && temp.getEvaluation() < bestSolution.getEvaluation()){
 						//log.println("ASPIRATIONNNNNNNNNNNNNNNNNNNNNNNNN");
 						estTaboue=false;
 					}
-
 				}
 			}
 			min=temp.getNbrBatch();
@@ -272,18 +260,7 @@ public class MySolverTabou extends GSolver {
 
 			if(!estTaboue){
 				temp.getProcessingSchedule()[indiceSheldule].setBatchIndice(batch) ;
-				for(int k=0;k<temp.getProcessingSchedule().length;k++){
-					if (temp.getProcessingSchedule()[k].getBatchIndice() < min){
-						min=temp.getProcessingSchedule()[k].getBatchIndice();
-					}
-				}
-				//si min est différent de 1 , on corrige
-				if (min > 1){
-					for(int k=0;k<temp.getProcessingSchedule().length;k++){
-						temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
-					}
-					temp.setNbrBatch(temp.getNbrBatch()-(min-1));
-				}
+				temp=optimiserSol(temp,min);
 				eval=temp.evaluate();
 				if(eval != -1 && eval <= meilleurVal){
 					meilleurVal=eval;
@@ -298,7 +275,21 @@ public class MySolverTabou extends GSolver {
 		this.meilleurCandidats=best;
 		return mvtTabou;
 	}
-
+	public GSupplyLinkSolution optimiserSol(GSupplyLinkSolution temp,int min){
+		for(int k=0;k<temp.getProcessingSchedule().length;k++){
+			if (temp.getProcessingSchedule()[k].getBatchIndice() < min){
+				min=temp.getProcessingSchedule()[k].getBatchIndice();
+			}
+		}
+		//si min est différent de 1 , on corrige
+		if (min > 1){
+			for(int k=0;k<temp.getProcessingSchedule().length;k++){
+				temp.getProcessingSchedule()[k].setBatchIndice(temp.getProcessingSchedule()[k].getBatchIndice()-(min-1));
+			}
+			temp.setNbrBatch(temp.getNbrBatch()-(min-1));
+		}
+		return temp;
+	}
 	public GSupplyLinkSolution evalListeCandidats(){
 		GSupplyLinkSolution mSol=null;
 		return mSol;
