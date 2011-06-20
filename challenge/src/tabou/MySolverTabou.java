@@ -68,22 +68,65 @@ public class MySolverTabou extends GSolver {
 			int index=indexMaxiSize(indice);
 
 			if(index != -1){
+				//log.println("Index maxi"+index);
+				//log.println("Volume maxi:"+problem.getJobData()[index].getSize());
 				sommeVolume+=problem.getJobData()[index].getSize();
 				if(sommeVolume > problem.getTransporter(0).getCapacity()){
 					sommeVolume-=problem.getJobData()[index].getSize();
 					added=true;
 				}else{
+					//log.println("Somme : "+sommeVolume);
 					indiceBatch.add(index);
+					//log.println("indicebach.add "+index);
 					indice[index]=-1;
 				}
-
-				if(sommeVolume < problem.getTransporter(0).getCapacity()){
+				/*while(existeMini(indice,sommeVolume)){
 					for(int i=0;i<indice.length;i++){
 						if(indice[i]!=-1){
 							if( sommeVolume + problem.getJobData()[i].getSize()<=problem.getTransporter(0).getCapacity() ){
+								log.println("Recherche qqch a ajouter");
+								if (i==indexMaxiSize(indice,sommeVolume)){
+									sommeVolume+=problem.getJobData()[i].getSize();
+									log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
+									log.println("indicebach.add "+i);
+									indiceBatch.add(i);
+									added=true;
+								}
+							}
+						}
+					}
+				}*/
+				if(sommeVolume < problem.getTransporter(0).getCapacity()){
+					for(int i=0;i<indice.length;i++){
+						//log.println("Somme : "+sommeVolume);
+						if(indice[i]!=-1){
+							if( sommeVolume + problem.getJobData()[i].getSize()<=problem.getTransporter(0).getCapacity() ){
+								//log.println("Recherche qqch a ajouter");
+								if (i==indexMaxiSize(indice,sommeVolume)){
 								sommeVolume+=problem.getJobData()[i].getSize();
+								//log.println("Somme :" +i+ " "+(problem.getJobData()[i].getSize()));
+								//log.println("indicebach.add "+i);
 								indiceBatch.add(i);
+								indice[i]=-1;
+								while(existeMini(indice,sommeVolume)){
+									for(int j=0;j<indice.length;j++){
+										if(indice[j]!=-1){
+											if( sommeVolume + problem.getJobData()[j].getSize()<=problem.getTransporter(0).getCapacity() ){
+												//log.println("Recherche qqch a ajouter2");
+												if (j==indexMaxiSize(indice,sommeVolume)){
+													sommeVolume+=problem.getJobData()[j].getSize();
+													//log.println("Somme :" +j+ " "+(problem.getJobData()[j].getSize()));
+													//log.println("indicebach.add "+j);
+													indiceBatch.add(j);
+													indice[j]=-1;
+													added=true;
+												}
+											}
+										}
+									}
+								}
 								added=true;
+								}
 							}
 						}
 					}
@@ -94,12 +137,17 @@ public class MySolverTabou extends GSolver {
 				added=true;
 			}
 			if(added){
+				//log.println("AJOUT");
 				while(!indiceBatch.isEmpty()){
+					//log.println("AJOUT "+indiceBatch.get(indiceBatch.size()-1));
 					finaltab[indiceBatch.get(indiceBatch.size()-1)]=nbrbatch;
 					sommeVolume=0;
 					indice[indiceBatch.get(indiceBatch.size()-1)]=-1;
 					indiceBatch.remove(indiceBatch.size()-1);
 					nbBatchAjouté++;
+				}
+				for (int i = 0; i < problem.getN(); i++) {
+					//log.println("fintab["+i+"]"+finaltab[i]+"\n");
 				}
 				nbrbatch--;
 				added=false;
@@ -124,7 +172,16 @@ public class MySolverTabou extends GSolver {
 
 	//Méthode qui retourne l'index de la valeur maximum du tableau différente de -1
 	// si il n'y en a pas , retourne -1
-
+	public boolean existeMini(double indice[],double sommeVolume){
+		for(int i=0;i<problem.getN();++i){
+			if(indice[i] != -1){
+				if( (problem.getJobData()[i].getSize()) <= problem.getTransporter(0).getCapacity()-sommeVolume){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	public int indexMaxiSize(double indice[]){
 		int index=-1;
 		double maximum=0;
@@ -138,11 +195,27 @@ public class MySolverTabou extends GSolver {
 		}
 		return index;
 	}
+	public int indexMaxiSize(double indice[],double sommeVolume){
+		int index=-1;
+		double maximum=0;
+		for(int i=0;i<problem.getN();++i){
+			if(indice[i] != -1){
+				if( (problem.getJobData()[i].getSize()) >= maximum && (problem.getJobData()[i].getSize()) <= (problem.getTransporter(0).getCapacity()-sommeVolume)  ){
+					index=i;
+					maximum=indice[i];
+				}
+			}
+		}
+		return index;
+	}
 	protected void solve() {
 		System.out.close();
 		GSupplyLinkSolution sol;
 		// Creation d'une bonne solution initial qui minimize le nombre de batch
 		sol=initMinimizeBatch2();
+		bestSolution=sol.clone();
+		//log.println(sol.toString());
+		//log.println(getElapsedTimeString());
 		int nbrBatch=sol.getNbrBatch();
 
 		if(problem.getN()>=50){
