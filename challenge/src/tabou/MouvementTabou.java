@@ -21,7 +21,7 @@ public class MouvementTabou {
 		this.duréeTaboue=t;
 	}
 	/**
-	 * Reduit la durée tabou, return vrai si la durée tabou est = 0
+	 * Reduit la durée taboue, return vrai si la durée tabou est = 0
 	 * @return
 	 */
 	public boolean reductionDuréeTabou(){

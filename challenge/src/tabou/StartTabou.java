@@ -22,19 +22,15 @@ package tabou;
 
 import gproblem.GSupplyLinkProblem;
 
-public class MainTabou {
- public MainTabou(String file){
+public class StartTabou {
+ public StartTabou(String file){
 	 GSupplyLinkProblem pb = new GSupplyLinkProblem("data/"+file) ;
 	 MySolverTabou solv =new MySolverTabou(pb);
 	 solv.start();
  }
- public MainTabou(String file,int temps){
+ public StartTabou(String file,int temps){
 	 GSupplyLinkProblem pb = new GSupplyLinkProblem("data/"+file) ;
 	 MySolverTabou solv =new MySolverTabou(pb,temps);
 	 solv.start();
  }
-	public static void main(String args[]) {
-		MainTabou mt = new MainTabou("instance200a.txt",30000);
-
-	}
 }

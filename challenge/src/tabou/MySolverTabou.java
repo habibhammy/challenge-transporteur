@@ -16,7 +16,7 @@ public class MySolverTabou extends GSolver {
 	//Nombre d'iteration sans amélioration 
 	private int iterationSansAmelio=0;
 	//Durée taboue
-	private int duréeTaboue;
+	private int dureeTaboue;
 	public MySolverTabou() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -39,9 +39,8 @@ public class MySolverTabou extends GSolver {
 
 
 	/**
-	 * Fonction qui essaye de trouver une solution  initial qui minimize le nombre de batch
-	 * Ce qui permet par la suite d'avoir a chercher juste en augmentant le nombre de batch
-	 * @return
+	 * Fonction qui trouve une solution initiale qui minimise le nombre de batch
+	 * @return la solution 
 	 */
 
 	public GSupplyLinkSolution initMinimizeBatch2(){
@@ -50,21 +49,19 @@ public class MySolverTabou extends GSolver {
 		double sommeVolume=0;
 		int nbrbatch = -1;
 		boolean added=false;
-		//Tableau  des valeur qu'il reste à ajouter
+		//Tableau  des valeurs qu'il reste à ajouter
 		double indice[]=new double[problem.getN()];
-		// Tableau de la solution final xD
+		// Tableau de la solution finale ><'
 		double finaltab[]=new double[problem.getN()];
 		//initialisation du tableau indice
 		for(int i=0;i<problem.getN();++i){
 			indice[i]=problem.getJobData()[i].getSize();
-
 		}
 		int nbBatchAjouté=0;
-
-		// indice des job qui vont constitué le prochain batch
+		// indice des jobs qui vont constituer le prochain batch
 		ArrayList<Integer> indiceBatch = new ArrayList<Integer>();
 		while(!fin){
-			//Retourne l'index qui correspond au plus petit volume, si il n'y a plus de job a ajouté , retourn -1
+			//Retourne l'index du plus petit volume, si il n'y a plus de job a ajouter , retourne -1
 			int index=indexMaxiSize(indice);
 
 			if(index != -1){
@@ -125,7 +122,6 @@ public class MySolverTabou extends GSolver {
 			}
 		}
 		for (int i = 0; i < problem.getN(); i++) {
-			finaltab[i]=finaltab[i];
 			finaltab[i]=Math.abs(finaltab[i]);
 		}
 
@@ -150,6 +146,8 @@ public class MySolverTabou extends GSolver {
 		}
 		return false;
 	}
+	
+	//Retourne l'indice du job qui a une taille maximum dans le tableau indice
 	public int indexMaxiSize(double indice[]){
 		int index=-1;
 		double maximum=0;
@@ -163,6 +161,7 @@ public class MySolverTabou extends GSolver {
 		}
 		return index;
 	}
+	//Retourne l'indice du job qui a une taille maximum < sommeVolume dans le tableau indice
 	public int indexMaxiSize(double indice[],double sommeVolume){
 		int index=-1;
 		double maximum=0;
@@ -179,15 +178,14 @@ public class MySolverTabou extends GSolver {
 	protected void solve() {
 		System.out.close();
 		GSupplyLinkSolution sol;
-		// Creation d'une bonne solution initial qui minimize le nombre de batch
-	
+		// Creation d'une solution initiale valide qui minimize le nombre de batch
 		sol=initMinimizeBatch2();
 		bestSolution=sol.clone();
 		int nbrBatch=sol.getNbrBatch();
 		if(problem.getN()>=50){
-			duréeTaboue=10;
+			dureeTaboue=10;
 		}else{
-			duréeTaboue=5;
+			dureeTaboue=5;
 		}
 		// Mouvement est Deja dans la liste taboue = faux
 		boolean estDejaTaboue=false;
@@ -206,22 +204,19 @@ public class MySolverTabou extends GSolver {
 			//Creation de la liste de voisin de la derniere solution 
 			mvtTabou=creerListeCandidats(sol);
 			//*********************************MAJ liste tabou
-			// Si la meilleur solution trouvé est deja dans la liste tabou
+			// test si le mouvement de la meilleur solution trouvée est deja dans la liste tabou
 			for(int i =0;i <listeTabou.size();++i){
-				if(listeTabou.get(i).compareTo(mvtTabou,duréeTaboue) == 0){
+				if(listeTabou.get(i).compareTo(mvtTabou,dureeTaboue) == 0){
 					estDejaTaboue=true;
 				}
 			}
 			//on ajoute dans la liste que les mvt qui n'y sont pas deja
 			if(!estDejaTaboue){
-				listeTabou.add(new MouvementTabou(mvtTabou,duréeTaboue));
+				listeTabou.add(new MouvementTabou(mvtTabou,dureeTaboue));
 			}
 			estDejaTaboue=false;
 			//la solution initiale devient le clone du meilleur voisin
 			sol=meilleurCandidats.clone();
-			//log.println(sol.toString());
-
-
 			// Evaluation of the newly built solution 
 			if (sol.getEvaluation()>=0) {
 				if (bestSolution==null || sol.getEvaluation()<bestSolution.getEvaluation()) { 
@@ -277,12 +272,14 @@ public class MySolverTabou extends GSolver {
 		int nbrBatch=sol.getNbrBatch();
 		boolean estTaboue=false;
 		int min;
+		//Creation des voisins
 		for(int j=0;j<400;j++){
 			temp=sol.clone();
 			batch= (int) (rand.nextDouble()*nbrBatch)+1 ;
 			indiceSheldule= (int) (rand.nextDouble()*sol.getProcessingSchedule().length) ;
 			testTabou=new Mouvement(indiceSheldule, batch);
 			for(int i =0;i <listeTabou.size();++i){
+				//on test si le mouvement crée est tabou
 				if(listeTabou.get(i).compareTo(testTabou) == 0){
 					estTaboue=true;
 					temp.getProcessingSchedule()[indiceSheldule].setBatchIndice(batch) ;
@@ -316,7 +313,9 @@ public class MySolverTabou extends GSolver {
 		this.meilleurCandidats=best;
 		return mvtTabou;
 	}
+	//Corrige la solution si le l'indice du batch minimum n'est pas 1
 	public GSupplyLinkSolution optimiserSol(GSupplyLinkSolution temp,int min){
+		//récupere l'indice minimum
 		for(int k=0;k<temp.getProcessingSchedule().length;k++){
 			if (temp.getProcessingSchedule()[k].getBatchIndice() < min){
 				min=temp.getProcessingSchedule()[k].getBatchIndice();
@@ -330,10 +329,6 @@ public class MySolverTabou extends GSolver {
 			temp.setNbrBatch(temp.getNbrBatch()-(min-1));
 		}
 		return temp;
-	}
-	public GSupplyLinkSolution evalListeCandidats(){
-		GSupplyLinkSolution mSol=null;
-		return mSol;
 	}
 	public GSupplyLinkSolution getMeilleurCandidats() {
 		return meilleurCandidats;
